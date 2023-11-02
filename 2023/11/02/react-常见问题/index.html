@@ -24,7 +24,7 @@
 <meta property="og:description" content="react16做了哪些更新react16之前，虚拟dom的diff算法 理解是一个递归的过程，树如果复杂的话，会堵塞后面的渲染，交互响应迟钝，出现卡顿。因此引入了fiber架构。他引入了任务优先级制度和requestIdleCallback，循环调度。将之前一根筋的渲染方式拆成了两个部分。  render阶段 也就是reconciliation 插入高优先级任务，被拆分成一个个小的fiber，在浏">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-11-02T10:56:00.000Z">
-<meta property="article:modified_time" content="2023-11-02T11:54:32.439Z">
+<meta property="article:modified_time" content="2023-11-02T12:13:25.359Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -230,7 +230,7 @@
         
         
         
-          14 分钟
+          15 分钟
         
       </span>
     
@@ -305,7 +305,7 @@
 <li>绕过react通过绑定addeventlistner，或者settimeout等等。</li>
 </ul>
 <h2 id="useContext为什么不会被挂到hook链表上"><a href="#useContext为什么不会被挂到hook链表上" class="headerlink" title="useContext为什么不会被挂到hook链表上"></a>useContext为什么不会被挂到hook链表上</h2><p>因为在初始化和更新时会有两套不同的函数执行，mount 和 update，但是useContext只有一套代码，都是readContext.所以不需要挂载链表上。<br>原理类似于观察者模式。Provider上的值发生变化，通知给context和consumer</p>
-<h2 id="useContext-和-redux-的区别"><a href="#useContext-和-redux-的区别" class="headerlink" title="useContext 和 redux 的区别"></a>useContext 和 redux 的区别</h2>
+<h2 id="useContext-和-redux-的区别"><a href="#useContext-和-redux-的区别" class="headerlink" title="useContext 和 redux 的区别"></a>useContext 和 redux 的区别</h2><h2 id="useLayoutEffect-和-useEffect区别"><a href="#useLayoutEffect-和-useEffect区别" class="headerlink" title="useLayoutEffect 和 useEffect区别"></a>useLayoutEffect 和 useEffect区别</h2><h2 id="useRef-和-useState区别"><a href="#useRef-和-useState区别" class="headerlink" title="useRef 和 useState区别"></a>useRef 和 useState区别</h2><h2 id="react-hook-的一些闭包问题-和陷阱"><a href="#react-hook-的一些闭包问题-和陷阱" class="headerlink" title="react hook 的一些闭包问题 和陷阱"></a>react hook 的一些闭包问题 和陷阱</h2>
                 
               </div>
             
