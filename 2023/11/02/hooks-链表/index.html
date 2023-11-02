@@ -24,7 +24,7 @@
 <meta property="og:description" content="Hooks 单向链表初始挂载和更新的 hooks，是不同的。初始化的 useEffect，和 更新渲染后的 useEffect，是在两个不同的阶段调用。本质上是两个函数。本质上来源于函数组件要维护一个 hooks 的链表，初始化创建链表，更新的时候更新链表 分属于两个过程的 hook 函数会在各自的过程中被赋值到ReactCurrentDispatcher的 current 属性上。所以在调用函数">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-11-02T09:58:31.000Z">
-<meta property="article:modified_time" content="2023-11-02T10:49:54.356Z">
+<meta property="article:modified_time" content="2023-11-02T11:54:21.291Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -219,7 +219,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.4k 字
+          1.1k 字
         
       </span>
     
@@ -230,7 +230,7 @@
         
         
         
-          12 分钟
+          10 分钟
         
       </span>
     
@@ -282,27 +282,6 @@
 <h3 id="组件挂载"><a href="#组件挂载" class="headerlink" title="组件挂载"></a>组件挂载</h3><p>初次挂载时，组件上没有任何hooks的信息，所以，这个过程主要是在fiber上创建hooks链表。挂载调用的是mountWorkInProgressHook，它会创建hook并将他们连接成链表，同时更新workInProgressHook，最终返回新创建的hook，也就是hooks链表。</p>
 <h3 id="组件更新"><a href="#组件更新" class="headerlink" title="组件更新"></a>组件更新</h3><p>由于存在current树，也会存在currentHook。自然就是有两条hook链表，分别存在workInProgress和current节点的memoizedSate。</p>
 <p><strong>useContext不会被挂到hook链表上</strong></p>
-<blockquote>
-<p>所以为什么 react要用hooks链表呢</p>
-</blockquote>
-<p>如果有多个同个hook调用，还需要有调用的先后顺序，使用next串联所有的hook。</p>
-<blockquote>
-<p>react16做了哪些更新</p>
-</blockquote>
-<blockquote>
-<p>react hooks的本质</p>
-</blockquote>
-<blockquote>
-<p>useContext为什么不会被挂到hook链表上</p>
-</blockquote>
-<p>因为在初始化和更新时会有两套不同的函数执行，mount 和 update，但是useContext只有一套代码，都是readContext.所以不需要挂载链表上。<br>原理类似于观察者模式。Provider上的值发生变化，通知给context和consumer</p>
-<blockquote>
-<p>useContext 和 redux 的区别</p>
-</blockquote>
-<blockquote>
-<p>为什么只能在函数最外层调用HOOK，不能在循环，条件里调用</p>
-</blockquote>
-<p>因为</p>
 
                 
               </div>
@@ -364,6 +343,12 @@
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/2023/11/02/react-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/" title="react 常见问题">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">react 常见问题</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">
