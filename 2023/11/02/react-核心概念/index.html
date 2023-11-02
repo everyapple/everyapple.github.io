@@ -24,7 +24,7 @@
 <meta property="og:description" content="React的核心概念 基于两点介绍  Fiber架构和schedule调度 优先级机制  Fiber是什么Fiber是什么？它是React的最小工作单元，在React的世界中，一切都可以是组件。在普通的HTML页面上，人为地将多个DOM元素整合在一起可以组成一个组件，HTML标签可以是组件（HostComponent），普通的文本节点也可以是组件（HostText）。每一个组件都可以对应一个fib">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-11-02T09:16:48.000Z">
-<meta property="article:modified_time" content="2023-11-02T09:57:44.421Z">
+<meta property="article:modified_time" content="2023-11-02T10:53:13.303Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -219,7 +219,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.6k 字
+          2.9k 字
         
       </span>
     
@@ -230,7 +230,7 @@
         
         
         
-          22 分钟
+          25 分钟
         
       </span>
     
@@ -279,6 +279,7 @@
 <li>优先级机制</li>
 </ol>
 <h2 id="Fiber是什么"><a href="#Fiber是什么" class="headerlink" title="Fiber是什么"></a>Fiber是什么</h2><p>Fiber是什么？它是React的最小工作单元，在React的世界中，一切都可以是组件。在普通的HTML页面上，人为地将多个DOM元素整合在一起可以组成一个组件，HTML标签可以是组件（HostComponent），普通的文本节点也可以是组件（HostText）。<br><strong>每一个组件都可以对应一个fiber节点</strong>，互相嵌套，组成fiber树。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">var</span> fiber = &#123;<br>  alternate,<br>  child,<br>  <span class="hljs-attr">elementType</span>: <span class="hljs-function">() =&gt;</span> &#123;&#125;,<br>  <span class="hljs-attr">memoizedProps</span>: <span class="hljs-literal">null</span>,<br>  <span class="hljs-attr">memoizedState</span>: <span class="hljs-literal">null</span>, <span class="hljs-comment">// 在函数组件中，memoizedState用于保存hook链表</span><br>  <span class="hljs-attr">pendingProps</span>: &#123;&#125;,<br>  <span class="hljs-keyword">return</span>,<br>  sibling,<br>  stateNode,<br>  tag, <span class="hljs-comment">// fiber的节点类型，初次渲染时，函数组件对应的tag为2，后续更新过程中对应的tag为0</span><br>  <span class="hljs-attr">type</span>: <span class="hljs-function">() =&gt;</span> &#123;&#125;<br>  <span class="hljs-attr">updateQueue</span>: <span class="hljs-literal">null</span>,<br>&#125;<br></code></pre></td></tr></table></figure>
 <h3 id="Fiber架构下的react是如何更新的"><a href="#Fiber架构下的react是如何更新的" class="headerlink" title="Fiber架构下的react是如何更新的"></a>Fiber架构下的react是如何更新的</h3><p>react的一次更新分为两个阶段</p>
 <ul>
 <li>render阶段</li>
@@ -396,8 +397,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/11/02/hello-world/" title="Hello World">
-                        <span class="hidden-mobile">Hello World</span>
+                      <a href="/2023/11/02/react-state%E8%AE%A1%E7%AE%97%E6%9B%B4%E6%96%B0-%E5%8E%9F%E7%90%86/" title="react state计算更新 原理">
+                        <span class="hidden-mobile">react state计算更新 原理</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

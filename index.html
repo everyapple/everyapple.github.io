@@ -232,7 +232,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/11/02/hooks-%E9%93%BE%E8%A1%A8/" target="_self">
         <div>
-          Hooks 链表初始挂载和更新的hooks，是不同的。初始化的useEffect，和 更新渲染后的useEffect，是在两个不同的阶段调用。本质上是两个函数。本质上来源于函数组件要维护一个hooks的链表，初始化创建链表，更新的时候更新链表 分属于两个过程的hook函数会在各自的过程中被赋值到ReactCurrentDispatcher的current属性上。所以在调用函数组件之前，当务之急是根
+          Hooks 单向链表初始挂载和更新的 hooks，是不同的。初始化的 useEffect，和 更新渲染后的 useEffect，是在两个不同的阶段调用。本质上是两个函数。本质上来源于函数组件要维护一个 hooks 的链表，初始化创建链表，更新的时候更新链表 分属于两个过程的 hook 函数会在各自的过程中被赋值到ReactCurrentDispatcher的 current 属性上。所以在调用函数
         </div>
       </a>
 
@@ -274,6 +274,39 @@
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
             <time datetime="2023-11-02 17:16" pubdate>
+              2023-11-02
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/11/02/react-state%E8%AE%A1%E7%AE%97%E6%9B%B4%E6%96%B0-%E5%8E%9F%E7%90%86/" target="_self">
+          react state计算更新 原理
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/11/02/react-state%E8%AE%A1%E7%AE%97%E6%9B%B4%E6%96%B0-%E5%8E%9F%E7%90%86/" target="_self">
+        <div>
+          react中的计算状态概述一旦用户的交互产生了更新，就会生成一个update对象去承接新的状态。多次更新（多次调用setState）会产生多个update对象，链接成一个环形链表：updateQueue，挂载在fiber节点上，然后在该fiber上的beginWorker阶段循环updateQueue，依次处理。在React中，类组件和根组件用一类update对象，函数组件用另一类。useEffe
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-11-02 15:44" pubdate>
               2023-11-02
             </time>
           </div>
