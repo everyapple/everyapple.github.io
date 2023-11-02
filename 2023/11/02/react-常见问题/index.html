@@ -24,7 +24,7 @@
 <meta property="og:description" content="react16做了哪些更新react16之前，虚拟dom的diff算法 理解是一个递归的过程，树如果复杂的话，会堵塞后面的渲染，交互响应迟钝，出现卡顿。因此引入了fiber架构。他引入了任务优先级制度和requestIdleCallback，循环调度。将之前一根筋的渲染方式拆成了两个部分。  render阶段 也就是reconciliation 插入高优先级任务，被拆分成一个个小的fiber，在浏">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-11-02T10:56:00.000Z">
-<meta property="article:modified_time" content="2023-11-02T14:59:51.903Z">
+<meta property="article:modified_time" content="2023-11-02T15:22:09.702Z">
 <meta property="article:author" content="dwood">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -219,7 +219,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4k 字
+          4.2k 字
         
       </span>
     
@@ -230,7 +230,7 @@
         
         
         
-          34 分钟
+          35 分钟
         
       </span>
     
@@ -298,9 +298,9 @@
 <li>hooks链表</li>
 <li>update链表 是一个环形链表，这样呢  尾部遍历完可以直接找到第一个头，在尾部插入也会快速定位，不需要遍历。</li>
 </ol>
-<h2 id="setState为什么默认是异步，什么时候是同步？"><a href="#setState为什么默认是异步，什么时候是同步？" class="headerlink" title="setState为什么默认是异步，什么时候是同步？"></a>setState为什么默认是异步，什么时候是同步？</h2><p><strong>这里的异步同步不同于promise的那种，指的是setState之后数据会不会立马变化。</strong><br>在setState方法中，有一个字段isBatchingUpdates可以判断是否直接更新还是批量。<br>isBatchingUpdates为true，代表批量更新，也就是异步。<strong>默认为false</strong><br>react有一个函数batchedUpdates会把这个值isBatchingUpdates变为true，也就是变为异步。因此只要绕过react事件机制的方法都是同步的。因为react在调用事件处理机制时都会调用这个batchedUpdates这个方法。<br>**本身也可以通过setstate或者usestate第二个参数返回一个callback，也可以立马获取。<br>react17中暴露了这个方法<code>batchedUpdates</code>，包一下也可以批量更新。<br>react18中直接处理了 全都是批量更新。<br>具体来说</p>
+<h2 id="setState为什么默认是异步，什么时候是同步？"><a href="#setState为什么默认是异步，什么时候是同步？" class="headerlink" title="setState为什么默认是异步，什么时候是同步？"></a>setState为什么默认是异步，什么时候是同步？</h2><p><strong>这里的异步同步不同于promise的那种，指的是setState之后数据会不会立马变化。</strong><br>在setState方法中，有一个字段isBatchingUpdates可以判断是否直接更新还是批量。<br>isBatchingUpdates为true，代表批量更新，也就是异步。<strong>默认为false</strong><br>react有一个函数batchedUpdates会把这个值isBatchingUpdates变为true，也就是变为异步。因此只要绕过react事件机制的方法都是同步的。因为react在调用事件处理机制时都会调用这个batchedUpdates这个方法。<br><strong>本身也可以通过setstate或者usestate第二个参数返回一个callback，也可以立马获取。</strong><br>react17中暴露了这个方法<code>batchedUpdates</code>，包一下也可以批量更新。<br>react18中直接处理了 全都是批量更新。<br>具体来说</p>
 <ul>
-<li>react引发的事件处理 （onclick等） 异步</li>
+<li>react引发的事件处理 （onclick等） 异步  </li>
 <li>绕过react通过绑定addeventlistner，或者settimeout等等。</li>
 </ul>
 <h2 id="useContext为什么不会被挂到hook链表上"><a href="#useContext为什么不会被挂到hook链表上" class="headerlink" title="useContext为什么不会被挂到hook链表上"></a>useContext为什么不会被挂到hook链表上</h2><p>因为在初始化和更新时会有两套不同的函数执行，mount 和 update，但是useContext只有一套代码，都是readContext.所以不需要挂载链表上。<br>原理类似于观察者模式。Provider上的值发生变化，通知给context和consumer</p>
@@ -414,6 +414,7 @@
 </blockquote>
 </li>
 </ul>
+<p>todo<br><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000039031957">https://segmentfault.com/a/1190000039031957</a><br>completework<br>diff key <a target="_blank" rel="noopener" href="https://juejin.cn/post/7161063643105198093">https://juejin.cn/post/7161063643105198093</a> <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/K8mHbIwR6NMaIrutDzg61A">https://mp.weixin.qq.com/s/K8mHbIwR6NMaIrutDzg61A</a><br>错误边界<br>http2.0<br>单点登录<br>html2canvas e2eX</p>
 
                 
               </div>
