@@ -13,19 +13,19 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
   <meta name="theme-color" content="#2f4154">
-  <meta name="author" content="John Doe">
+  <meta name="author" content="dwood">
   <meta name="keywords" content="">
   
     <meta name="description" content="React的核心概念 基于两点介绍  Fiber架构和schedule调度 优先级机制  Fiber是什么Fiber是什么？它是React的最小工作单元，在React的世界中，一切都可以是组件。在普通的HTML页面上，人为地将多个DOM元素整合在一起可以组成一个组件，HTML标签可以是组件（HostComponent），普通的文本节点也可以是组件（HostText）。每一个组件都可以对应一个fib">
 <meta property="og:type" content="article">
 <meta property="og:title" content="react 核心概念">
-<meta property="og:url" content="http://example.com/2023/11/02/react-%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5/index.html">
+<meta property="og:url" content="https://everyapple.github.io/2023/11/02/react-%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5/index.html">
 <meta property="og:site_name" content="pplWood">
 <meta property="og:description" content="React的核心概念 基于两点介绍  Fiber架构和schedule调度 优先级机制  Fiber是什么Fiber是什么？它是React的最小工作单元，在React的世界中，一切都可以是组件。在普通的HTML页面上，人为地将多个DOM元素整合在一起可以组成一个组件，HTML标签可以是组件（HostComponent），普通的文本节点也可以是组件（HostText）。每一个组件都可以对应一个fib">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-11-02T09:16:48.000Z">
-<meta property="article:modified_time" content="2023-11-02T11:59:42.821Z">
-<meta property="article:author" content="John Doe">
+<meta property="article:modified_time" content="2023-11-02T14:18:08.886Z">
+<meta property="article:author" content="dwood">
 <meta name="twitter:card" content="summary_large_image">
   
   
@@ -68,7 +68,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"everyapple.github.io","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -286,7 +286,7 @@
 <li>commit阶段</li>
 </ul>
 <h5 id="render阶段"><a href="#render阶段" class="headerlink" title="render阶段"></a>render阶段</h5><blockquote>
-<p>render阶段是 scheduler调度+ reconcile 就是把虚拟dom变成fiber<br>render阶段是在内部构建一颗新的fiber树，一般成为workInProgress树，构建过程依据现有的fiber树（current树），从root开始深度遍历再回溯到root。</p>
+<p>render阶段是 scheduler调度+ reconcile 就是把虚拟dom变成fiber<br>render阶段是在内部构建一颗新的fiber树，一般成为workInProgress树，构建过程依据现有的fiber树（current树），从root开始深度遍历再回溯到root。创建effect链表</p>
 </blockquote>
 <p>每个fiber会经历两个阶段：</p>
 <ul>
@@ -346,13 +346,13 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>react 核心概念</div>
-      <div>http://example.com/2023/11/02/react-核心概念/</div>
+      <div>https://everyapple.github.io/2023/11/02/react-核心概念/</div>
     </div>
     <div class="license-meta">
       
         <div class="license-meta-item">
           <div>作者</div>
-          <div>John Doe</div>
+          <div>dwood</div>
         </div>
       
       
