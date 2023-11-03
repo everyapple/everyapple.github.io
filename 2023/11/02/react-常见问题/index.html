@@ -24,7 +24,7 @@
 <meta property="og:description" content="react16做了哪些更新react16之前，虚拟dom的diff算法 理解是一个递归的过程，树如果复杂的话，会堵塞后面的渲染，交互响应迟钝，出现卡顿。因此引入了fiber架构。他引入了任务优先级制度和requestIdleCallback，循环调度。将之前一根筋的渲染方式拆成了两个部分。  render阶段 也就是reconciliation 插入高优先级任务，被拆分成一个个小的fiber，在浏">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-11-02T10:56:00.000Z">
-<meta property="article:modified_time" content="2023-11-02T15:22:09.702Z">
+<meta property="article:modified_time" content="2023-11-03T05:17:52.194Z">
 <meta property="article:author" content="dwood">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -219,7 +219,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4.2k 字
+          4.3k 字
         
       </span>
     
@@ -230,7 +230,7 @@
         
         
         
-          35 分钟
+          36 分钟
         
       </span>
     
@@ -280,6 +280,7 @@
 <p><strong>由于render阶段可以打断 + 任务优先级问题</strong>，使得很多生命周期被多次执行。因此react17之后componentWillMount,componentWillUpdate, componentWillReceivieProps被取缔。</p>
 <p><strong>引入了workProgressHook和currentHook</strong>，构建了两个workInProgress和current树，两个链表互相引用，如果workInProgress树生成失败，则更新失败，但是页面不会崩溃。</p>
 <h2 id="为什么-react要用hooks链表呢"><a href="#为什么-react要用hooks链表呢" class="headerlink" title="为什么 react要用hooks链表呢"></a>为什么 react要用hooks链表呢</h2><p>如果有多个同个hook调用，还需要有调用的先后顺序，使用next串联所有的hook，同时有一个workProcessHook指针记录当前调用的是哪个hook，方便下次更新时获取上一次更新的对象。在下一次更新时，再次执行hook，就会去找到当前运行节点的链表。</p>
+<p>链表的好处在于，即便暂停了，也可以用next记录下一次执行的节点，一旦浏览器有了空余时间，可以直接从这个next开始恢复。</p>
 <h2 id="为什么只能在函数最外层调用HOOK，不能在循环，条件里调用"><a href="#为什么只能在函数最外层调用HOOK，不能在循环，条件里调用" class="headerlink" title="为什么只能在函数最外层调用HOOK，不能在循环，条件里调用"></a>为什么只能在函数最外层调用HOOK，不能在循环，条件里调用</h2><p>因为hook每次调用都会生成一个hook链表挂在fiber.memoizedstate上，按顺序挂的。挂载和更新必须保证是队列是一致的，不然会引起异常报错。</p>
 <h2 id="react-hooks的引入解决了什么"><a href="#react-hooks的引入解决了什么" class="headerlink" title="react hooks的引入解决了什么"></a>react hooks的引入解决了什么</h2><p>react的设计思想： 数据驱动视图。<br><code>view = fn(state)           </code></p>
 <h3 id="hooks出现前的逻辑复用"><a href="#hooks出现前的逻辑复用" class="headerlink" title="hooks出现前的逻辑复用"></a>hooks出现前的逻辑复用</h3><p>主要是通过hoc和render props 解决，面对复杂业务，会引发<strong>嵌套地狱</strong>和<strong>引发diff算法性能问题</strong></p>
