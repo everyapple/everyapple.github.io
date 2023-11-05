@@ -24,7 +24,7 @@
 <meta property="og:description" content="React的核心概念 基于两点介绍  Fiber架构和schedule调度 优先级机制  Fiber是什么Fiber是什么？它是React的最小工作单元，在React的世界中，一切都可以是组件。在普通的HTML页面上，人为地将多个DOM元素整合在一起可以组成一个组件，HTML标签可以是组件（HostComponent），普通的文本节点也可以是组件（HostText）。每一个组件都可以对应一个fib">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-11-02T09:16:48.000Z">
-<meta property="article:modified_time" content="2023-11-02T14:18:08.886Z">
+<meta property="article:modified_time" content="2023-11-03T05:34:24.304Z">
 <meta property="article:author" content="dwood">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -310,7 +310,15 @@
 <p>这两个任务都是独立的React任务，都会被schedule调度。<br>render阶段的优先级是根据本次的更新的优先级决定的，高优先级可以打断低优先级<br>commit阶段的优先级不可打断，按最高优先级来执行</p>
 </blockquote>
 <h4 id="schedule调度"><a href="#schedule调度" class="headerlink" title="schedule调度"></a>schedule调度</h4><p>根据优先级进行调度，保证最高优先级执行<br>根据时间片对任务进行中止和恢复。</p>
-<h4 id="优先级机制"><a href="#优先级机制" class="headerlink" title="优先级机制"></a>优先级机制</h4><h2 id="交互就会生成更新，不同的更新，优先级不一样。react中人为的进行了划分，最终目的是调度轻重缓急，因此产生了一套事件调度的优先级机制。-事件优先级：-按照用户的交互产生的-更新优先级：-事件导致的react产生的update对象的优先级（update-lane-任务优先级：-产生update对象后，react去执行的优先级-调度优先级：-scheduler根据react的任务生的调度任务的优先级"><a href="#交互就会生成更新，不同的更新，优先级不一样。react中人为的进行了划分，最终目的是调度轻重缓急，因此产生了一套事件调度的优先级机制。-事件优先级：-按照用户的交互产生的-更新优先级：-事件导致的react产生的update对象的优先级（update-lane-任务优先级：-产生update对象后，react去执行的优先级-调度优先级：-scheduler根据react的任务生的调度任务的优先级" class="headerlink" title="交互就会生成更新，不同的更新，优先级不一样。react中人为的进行了划分，最终目的是调度轻重缓急，因此产生了一套事件调度的优先级机制。- 事件优先级： 按照用户的交互产生的- 更新优先级： 事件导致的react产生的update对象的优先级（update.lane)- 任务优先级： 产生update对象后，react去执行的优先级- 调度优先级： scheduler根据react的任务生的调度任务的优先级"></a>交互就会生成更新，不同的更新，优先级不一样。<br>react中人为的进行了划分，最终目的是调度轻重缓急，因此产生了一套事件调度的优先级机制。<br>- 事件优先级： 按照用户的交互产生的<br>- 更新优先级： 事件导致的react产生的update对象的优先级（update.lane)<br>- 任务优先级： 产生update对象后，react去执行的优先级<br>- 调度优先级： scheduler根据react的任务生的调度任务的优先级</h2><h2 id="事件优先级"><a href="#事件优先级" class="headerlink" title="事件优先级"></a>事件优先级</h2><ol>
+<h4 id="优先级机制"><a href="#优先级机制" class="headerlink" title="优先级机制"></a>优先级机制</h4><p>交互就会生成更新，不同的更新，优先级不一样。<br>react中人为的进行了划分，最终目的是调度轻重缓急，因此产生了一套事件调度的优先级机制。</p>
+<ul>
+<li>事件优先级： 按照用户的交互产生的</li>
+<li>更新优先级： 事件导致的react产生的update对象的优先级（update.lane)</li>
+<li>任务优先级： 产生update对象后，react去执行的优先级</li>
+<li>调度优先级： scheduler根据react的任务生的调度任务的优先级</li>
+</ul>
+<hr>
+<h2 id="事件优先级"><a href="#事件优先级" class="headerlink" title="事件优先级"></a>事件优先级</h2><ol>
 <li>离散事件 click，keydown等不连续的 优先级0</li>
 <li>用户阻塞事件 scroll drag mouseover 连续，阻塞渲染 优先级1</li>
 <li>连续事件 canplay error audio标签的canplay等等，优先2 最高</li>

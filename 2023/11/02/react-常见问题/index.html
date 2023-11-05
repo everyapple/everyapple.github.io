@@ -24,7 +24,7 @@
 <meta property="og:description" content="react16做了哪些更新react16之前，虚拟dom的diff算法 理解是一个递归的过程，树如果复杂的话，会堵塞后面的渲染，交互响应迟钝，出现卡顿。因此引入了fiber架构。他引入了任务优先级制度和requestIdleCallback，循环调度。将之前一根筋的渲染方式拆成了两个部分。  render阶段 也就是reconciliation 插入高优先级任务，被拆分成一个个小的fiber，在浏">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-11-02T10:56:00.000Z">
-<meta property="article:modified_time" content="2023-11-03T05:17:52.194Z">
+<meta property="article:modified_time" content="2023-11-05T10:02:53.933Z">
 <meta property="article:author" content="dwood">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -219,7 +219,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4.3k 字
+          5.1k 字
         
       </span>
     
@@ -230,7 +230,7 @@
         
         
         
-          36 分钟
+          43 分钟
         
       </span>
     
@@ -301,12 +301,12 @@
 </ol>
 <h2 id="setState为什么默认是异步，什么时候是同步？"><a href="#setState为什么默认是异步，什么时候是同步？" class="headerlink" title="setState为什么默认是异步，什么时候是同步？"></a>setState为什么默认是异步，什么时候是同步？</h2><p><strong>这里的异步同步不同于promise的那种，指的是setState之后数据会不会立马变化。</strong><br>在setState方法中，有一个字段isBatchingUpdates可以判断是否直接更新还是批量。<br>isBatchingUpdates为true，代表批量更新，也就是异步。<strong>默认为false</strong><br>react有一个函数batchedUpdates会把这个值isBatchingUpdates变为true，也就是变为异步。因此只要绕过react事件机制的方法都是同步的。因为react在调用事件处理机制时都会调用这个batchedUpdates这个方法。<br><strong>本身也可以通过setstate或者usestate第二个参数返回一个callback，也可以立马获取。</strong><br>react17中暴露了这个方法<code>batchedUpdates</code>，包一下也可以批量更新。<br>react18中直接处理了 全都是批量更新。<br>具体来说</p>
 <ul>
-<li>react引发的事件处理 （onclick等） 异步  </li>
-<li>绕过react通过绑定addeventlistner，或者settimeout等等。</li>
+<li>react引发的事件处理 （onclick等） 异步</li>
+<li>绕过react通过绑定addeventlistner，或者settimeout等等 同步</li>
 </ul>
 <h2 id="useContext为什么不会被挂到hook链表上"><a href="#useContext为什么不会被挂到hook链表上" class="headerlink" title="useContext为什么不会被挂到hook链表上"></a>useContext为什么不会被挂到hook链表上</h2><p>因为在初始化和更新时会有两套不同的函数执行，mount 和 update，但是useContext只有一套代码，都是readContext.所以不需要挂载链表上。<br>原理类似于观察者模式。Provider上的值发生变化，通知给context和consumer</p>
 <h2 id="useContext-和-redux-的区别"><a href="#useContext-和-redux-的区别" class="headerlink" title="useContext 和 redux 的区别"></a>useContext 和 redux 的区别</h2><ul>
-<li>context <ul>
+<li>context<ul>
 <li>适合做全局管理</li>
 <li>避免props传递的繁琐</li>
 <li>如果组件依赖了context， 只要局部更新，组件都会一起更新，加上memo也没用，因为memo依赖的是props</li>
@@ -322,7 +322,11 @@
 </ul>
 <h2 id="useLayoutEffect-和-useEffect区别"><a href="#useLayoutEffect-和-useEffect区别" class="headerlink" title="useLayoutEffect 和 useEffect区别"></a>useLayoutEffect 和 useEffect区别</h2><p>react的一次更新分为2个阶段：</p>
 <ul>
-<li>render阶段： 构建一个fiber树，也就是workInProgress树；构建过程中，从root开始深度优先遍历再回溯到root<br>-beginWorker ：组件状态的计算，diff，render函数<br>-completeWorker：收集effect依赖链表，收集被跳过的update对象</li>
+<li>render阶段： 构建一个fiber树，也就是workInProgress树；构建过程中，从root开始深度优先遍历再回溯到root<ul>
+<li>beginWorker ：组件状态的计算，diff，render函数</li>
+<li>completeWorker：收集effect依赖链表，收集被跳过的update对象</li>
+</ul>
+</li>
 <li>commit阶段 ： 异步执行useEffect，同步执行useLayoutEffect。<br><strong>useEffect要在页面渲染完之后才执行，不会堵塞页面，后者则是在dom更新完成，还没有开始渲染前执行。</strong><br>整体流程上都是先在render阶段，生成effect，并将它们拼接成链表，存到fiber.updateQueue上，最终带到commit阶段被处理。他们彼此的区别只是最终的执行时机不同，一个异步一个同步，这使得useEffect不会阻塞渲染，而useLayoutEffect会阻塞渲染。</li>
 </ul>
 <h2 id="useRef-和-useState区别"><a href="#useRef-和-useState区别" class="headerlink" title="useRef 和 useState区别"></a>useRef 和 useState区别</h2><table>
@@ -371,14 +375,14 @@
 <h2 id="react-hook-的一些闭包问题-和陷阱"><a href="#react-hook-的一些闭包问题-和陷阱" class="headerlink" title="react hook 的一些闭包问题 和陷阱"></a>react hook 的一些闭包问题 和陷阱</h2><p><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903982037467143">https://juejin.cn/post/6844903982037467143</a><br><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844904193044512782">https://juejin.cn/post/6844904193044512782</a></p>
 <h2 id="父组件和子组件的useEffect哪个先更新"><a href="#父组件和子组件的useEffect哪个先更新" class="headerlink" title="父组件和子组件的useEffect哪个先更新"></a>父组件和子组件的useEffect哪个先更新</h2><p>dom render 和 主线程 先执行<br>useEffect 在之后执行<br><strong>dom render</strong> 永远在useEffect之前执行</p>
 <ul>
-<li>父子组件 ： <ul>
+<li>父子组件 ：<ul>
 <li>dom render 和 主线程： 父 -&gt; 子</li>
 <li>useEffect 在之后执行 ： 子 -&gt; 父</li>
 </ul>
 </li>
 <li>兄弟组件：<ul>
 <li>按前后顺序，递归</li>
-<li>如果组件含有子组件，则先执行完子组件 ，在走兄弟<br>[react中函数组件 - 父子组件的执行顺序]<a target="_blank" rel="noopener" href="https://juejin.cn/post/7169526604199100447">https://juejin.cn/post/7169526604199100447</a></li>
+<li>如果组件含有子组件，则先执行完子组件 ，在走兄弟<br><a target="_blank" rel="noopener" href="https://juejin.cn/post/7169526604199100447">react中函数组件 - 父子组件的执行顺序</a></li>
 </ul>
 </li>
 </ul>
@@ -390,7 +394,7 @@
 <p>父子组件的return（destroy）事件呢<br><a target="_blank" rel="noopener" href="https://codesandbox.io/s/uselayouteffect-zhixingshunxu-h5gg2?file=/src/App.js">demo</a></p>
 </blockquote>
 <ol>
-<li>在删除dom时，从父-&gt;子 删除  destroy </li>
+<li>在删除dom时，从父-&gt;子 删除  destroy</li>
 <li>在更新dom时，或者更新和删除都有时， 子-&gt;父 destroy<br><strong>无论什么情况</strong>都是先执行所有的destroy 在执行create方法</li>
 </ol>
 <h2 id="useEffect-return的意义"><a href="#useEffect-return的意义" class="headerlink" title="useEffect return的意义"></a>useEffect return的意义</h2><p>每次重新渲染，都会让原组件（包括子组件）销毁，在重新诞生。</p>
@@ -415,7 +419,14 @@
 </blockquote>
 </li>
 </ul>
-<p>todo<br><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000039031957">https://segmentfault.com/a/1190000039031957</a><br>completework<br>diff key <a target="_blank" rel="noopener" href="https://juejin.cn/post/7161063643105198093">https://juejin.cn/post/7161063643105198093</a> <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/K8mHbIwR6NMaIrutDzg61A">https://mp.weixin.qq.com/s/K8mHbIwR6NMaIrutDzg61A</a><br>错误边界<br>http2.0<br>单点登录<br>html2canvas e2eX</p>
+<h4 id="React的错误边界"><a href="#React的错误边界" class="headerlink" title="React的错误边界"></a>React的错误边界</h4><h2 id="过去，组件内的代码异常会导致react内部的状态被破坏，一个组件在渲染期间发生错误，会卸载整个组件树。但是部分组件的错误，不应该让整个应用页面崩溃。因此react16引入了错误边界错误边界是一种react组件，他可以捕获发生在组件任何位置的错误，并记录下来，展示降级的ui渲染。-只能在类组件中使用，不能在hook中使用。因为需要用this-setState的回调传递callback，useState无法传入回调。-以下四种场景无法捕获错误边界-事件处理函数，需要用原生的trycatch-setTimeout等异步代码-服务端渲染-他自己本身的错误"><a href="#过去，组件内的代码异常会导致react内部的状态被破坏，一个组件在渲染期间发生错误，会卸载整个组件树。但是部分组件的错误，不应该让整个应用页面崩溃。因此react16引入了错误边界错误边界是一种react组件，他可以捕获发生在组件任何位置的错误，并记录下来，展示降级的ui渲染。-只能在类组件中使用，不能在hook中使用。因为需要用this-setState的回调传递callback，useState无法传入回调。-以下四种场景无法捕获错误边界-事件处理函数，需要用原生的trycatch-setTimeout等异步代码-服务端渲染-他自己本身的错误" class="headerlink" title="过去，组件内的代码异常会导致react内部的状态被破坏，一个组件在渲染期间发生错误，会卸载整个组件树。但是部分组件的错误，不应该让整个应用页面崩溃。因此react16引入了错误边界错误边界是一种react组件，他可以捕获发生在组件任何位置的错误，并记录下来，展示降级的ui渲染。&gt; 只能在类组件中使用，不能在hook中使用。因为需要用this.setState的回调传递callback，useState无法传入回调。&gt; 以下四种场景无法捕获错误边界&gt; &gt; - 事件处理函数，需要用原生的trycatch&gt; &gt; - setTimeout等异步代码&gt; &gt; - 服务端渲染&gt; &gt; - 他自己本身的错误"></a>过去，组件内的代码异常会导致react内部的状态被破坏，一个组件在渲染期间发生错误，会卸载整个组件树。但是部分组件的错误，不应该让整个应用页面崩溃。因此react16引入了<strong>错误边界</strong><br>错误边界是一种react组件，他可以捕获发生在组件任何位置的错误，并记录下来，展示降级的ui渲染。<br>&gt; 只能在类组件中使用，不能在hook中使用。因为需要用this.setState的回调传递callback，useState无法传入回调。<br>&gt; 以下四种场景无法捕获错误边界<br>&gt; &gt; - 事件处理函数，需要用原生的trycatch<br>&gt; &gt; - setTimeout等异步代码<br>&gt; &gt; - 服务端渲染<br>&gt; &gt; - 他自己本身的错误</h2><p>实现错误边界的方法 依据两个生命周期<br><strong>getDerivedStateFromError</strong>和<strong>componentDidCatch</strong></p>
+<ul>
+<li>getDerivedStateFromError: 静态方法，给个机会去渲染降级ui</li>
+<li>componetDidCatch： 组件实例方法，当错误发生后，记录错误<br>当一个类组件定义了以上二者其一的时候，就会被定性为错误边界。<br><strong>一般来说，会包在最顶层的路由组件</strong>、具体的粒度有自己决定<br>需要注意的是，从react16开始，没有被错误边界捕获的错误会导致整个react组件树被卸载。<br>因为 有的时候，留下一个错误的ui 比 完全移除他 更糟糕。</li>
+</ul>
+<h4 id="react的fiber-vue为什么不需要fiber"><a href="#react的fiber-vue为什么不需要fiber" class="headerlink" title="react的fiber vue为什么不需要fiber"></a>react的fiber vue为什么不需要fiber</h4><p>react的fiber机制：是由于react内状态不可修改，所以需要自顶向下的去渲染树。本身会在内部生成一颗巨大的虚拟dom树，给第二步的diff带来了很大的性能消耗。而js占据主线程，渲染线程就无法工作。所以出现了react的fiber。<br>fiber 是一种纤程。他通过requestIdleCallback 去控制组件渲染。<br>vue的渲染机制：vue2使用的Object.defineProperty或者vue3中的proxy对数据做一个劫持。vue能准确的知道视图模版中哪一块需要更新。他本身可以实现精准更新，精确到当前组件的最小粒度。一方面：是给每个组件配置了<strong>监听器</strong>，管理视图的依赖收集和数据更新。一方面：他的<strong>模版语法，可以实现静态编译</strong>，react的jsx语法是做不到的。这两者对性能也是有消耗的。但是他就不需要fiber去控制组件渲染，让出浏览器线程这类操作了。</p>
+<p>http2.0<br>单点登录<br>html2canvas e2e</p>
+<p>性能优化<br>taro的选型</p>
 
                 
               </div>
@@ -478,9 +489,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/11/02/react-diff%E9%97%AE%E9%A2%98/" title="react diff问题">
+                      <a href="/2023/11/02/react-%E5%92%8Cvue%E7%9A%84%E5%8C%BA%E5%88%AB/" title="react和vue的区别">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">react diff问题</span>
+                        <span class="hidden-mobile">react和vue的区别</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
