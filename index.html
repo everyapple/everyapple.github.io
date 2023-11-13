@@ -232,7 +232,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/11/08/webapck/" target="_self">
         <div>
-          webpack是一个打包工具，他会把js，css，图片，html文件，分析整个文件的目录结构，确认文件之间的依赖，通过编译，转换，生成js格式的bundle文件。他把所有的文件当成模块。 热更新的原理对代码进行修改的时候，webpack会对代码进行重新打包，将新的模块发到浏览器上，浏览器将新的模块替换老的模块，在不触发更新的情况下。 webpackHMR的核心就是客户端将新的文件从服务端拉取，也就
+          webpack是一个打包工具，他会把js，css，图片，html文件，分析整个文件的目录结构，确认文件之间的依赖，通过编译，转换，生成js格式的bundle文件。他把所有的文件当成模块。 webpack打包过程 根据entry入口文件，调用所有配置的loader对象进行编译因为webpack只能处理js，css等其他格式需要loader辅助进行编成js后进行打包 利用babel将js转为ast，在
         </div>
       </a>
 
@@ -265,7 +265,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/11/05/%E5%85%B3%E4%BA%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%9A%84%E4%B8%83%E4%B8%83%E4%B8%89%E4%B8%89/" target="_self">
         <div>
-          
+          SSR服务端渲染SSR与CSR渲染页面，都是服务端传回html。不同的是，csr的时候服务端先传回js，在传回data。而ssr是先传回数据，在传回js。因此提升了首屏渲染速度。 ssr优点 利于seo 更快的首屏加载速度，不需要等待js 安全性 代码复用性  缺点 服务端压力大 开发难度提升 不利于实现动态交互，一些依赖客户端的插件或者第三方库无法在服务端运行。 方案需要开发成本和维护成本 会影
         </div>
       </a>
 
