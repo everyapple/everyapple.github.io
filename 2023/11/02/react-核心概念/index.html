@@ -24,7 +24,7 @@
 <meta property="og:description" content="React的核心概念 基于两点介绍  Fiber架构和schedule调度 优先级机制  Fiber是什么Fiber是什么？它是React的最小工作单元，在React的世界中，一切都可以是组件。在普通的HTML页面上，人为地将多个DOM元素整合在一起可以组成一个组件，HTML标签可以是组件（HostComponent），普通的文本节点也可以是组件（HostText）。每一个组件都可以对应一个fib">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-11-02T09:16:48.000Z">
-<meta property="article:modified_time" content="2023-11-10T08:11:49.698Z">
+<meta property="article:modified_time" content="2023-11-13T05:19:08.279Z">
 <meta property="article:author" content="dwood">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -291,7 +291,7 @@
 <p>每个fiber会经历两个阶段：</p>
 <ul>
 <li>beginWorker: 组件状态的计算，diff的操作，render函数的执行</li>
-<li>completeWorder: 被跳过的优先级update收集， effect链表的收集</li>
+<li>completeWorker: 被跳过的优先级update收集， effect链表的收集</li>
 </ul>
 <p><strong>构建work树过程会有一个指针记录构建到哪个fiber节点，以便更新任务可恢复</strong></p>
 <h5 id="beginWorker"><a href="#beginWorker" class="headerlink" title="beginWorker"></a>beginWorker</h5><p>它的职能主要是<strong>节点更新的入口，不会直接更新</strong>，就是拦截无需更新的节点。</p>
