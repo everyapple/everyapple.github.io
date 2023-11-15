@@ -16,12 +16,12 @@
   <meta name="author" content="dwood">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Hooks 单向链表初始挂载和更新的 hooks，是不同的。初始化的 useEffect，和 更新渲染后的 useEffect，是在两个不同的阶段调用。本质上是两个函数。本质上来源于函数组件要维护一个 hooks 的链表，初始化创建链表，更新的时候更新链表 分属于两个过程的 hook 函数会在各自的过程中被赋值到ReactCurrentDispatcher的 current 属性上。所以在调用函数">
+    <meta name="description" content="Hooks 单向链表 初始挂载和更新的 hooks，是不同的。 初始化的 useEffect，和 更新渲染后的 useEffect，是在两个不同的阶段调用。本质上是两个函数。 本质上来源于函数组件要维护一个 hooks 的链表，初始化创建链表，更新的时候更新链表 分属于两个过程的 hook 函数会在各自的过程中被赋值到ReactCurrentDispatcher的 current 属性上。所以在调">
 <meta property="og:type" content="article">
 <meta property="og:title" content="hooks 链表">
 <meta property="og:url" content="https://everyapple.github.io/2023/11/02/hooks-%E9%93%BE%E8%A1%A8/index.html">
 <meta property="og:site_name" content="pplWood">
-<meta property="og:description" content="Hooks 单向链表初始挂载和更新的 hooks，是不同的。初始化的 useEffect，和 更新渲染后的 useEffect，是在两个不同的阶段调用。本质上是两个函数。本质上来源于函数组件要维护一个 hooks 的链表，初始化创建链表，更新的时候更新链表 分属于两个过程的 hook 函数会在各自的过程中被赋值到ReactCurrentDispatcher的 current 属性上。所以在调用函数">
+<meta property="og:description" content="Hooks 单向链表 初始挂载和更新的 hooks，是不同的。 初始化的 useEffect，和 更新渲染后的 useEffect，是在两个不同的阶段调用。本质上是两个函数。 本质上来源于函数组件要维护一个 hooks 的链表，初始化创建链表，更新的时候更新链表 分属于两个过程的 hook 函数会在各自的过程中被赋值到ReactCurrentDispatcher的 current 属性上。所以在调">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-11-02T09:58:31.000Z">
 <meta property="article:modified_time" content="2023-11-02T12:27:54.895Z">
@@ -272,15 +272,20 @@
             
               <div class="markdown-body">
                 
-                <h1 id="Hooks-单向链表"><a href="#Hooks-单向链表" class="headerlink" title="Hooks 单向链表"></a>Hooks 单向链表</h1><p>初始挂载和更新的 hooks，是不同的。<br>初始化的 useEffect，和 更新渲染后的 useEffect，是在两个不同的阶段调用。本质上是两个函数。<br><strong>本质上来源于函数组件要维护一个 hooks 的链表，初始化创建链表，更新的时候更新链表</strong></p>
+                <h1>Hooks 单向链表</h1>
+<p>初始挂载和更新的 hooks，是不同的。<br>
+初始化的 useEffect，和 更新渲染后的 useEffect，是在两个不同的阶段调用。本质上是两个函数。<br>
+<strong>本质上来源于函数组件要维护一个 hooks 的链表，初始化创建链表，更新的时候更新链表</strong></p>
 <p>分属于两个过程的 hook 函数会在各自的过程中被赋值到<em>ReactCurrentDispatcher</em>的 current 属性上。所以在调用函数组件之前，当务之急是根据当前所处的阶段来决定 ReactCurrentDispatcher 的 current，这样才可以在正确的阶段调用到正确的 hook 函数。<em>HooksDispatcherOnMount</em> ，<em>HooksDispatcherOnUpdate</em> 这俩内部是不一样的，不同阶段对 hook 的处理不一样</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">const</span> <span class="hljs-title class_">HooksDispatcherOnMount</span>: <span class="hljs-title class_">Dispatcher</span> = &#123;<br>  <span class="hljs-attr">useCallback</span>: mountCallback,<br>  <span class="hljs-attr">useContext</span>: readContext,<br>  <span class="hljs-attr">useEffect</span>: mountEffect,<br>  ...<br>&#125;;<br><br><span class="hljs-keyword">const</span> <span class="hljs-title class_">HooksDispatcherOnUpdate</span>: <span class="hljs-title class_">Dispatcher</span> = &#123;<br>  <span class="hljs-attr">useCallback</span>: updateCallback,<br>  <span class="hljs-attr">useContext</span>: readContext,<br>  <span class="hljs-attr">useEffect</span>: updateEffect,<br>  ...<br>&#125;;<br></code></pre></td></tr></table></figure>
-
-<h2 id="认识-hooks-链表"><a href="#认识-hooks-链表" class="headerlink" title="认识 hooks 链表"></a>认识 hooks 链表</h2><p>hook 的结构</p>
+<h2 id="认识-hooks-链表">认识 hooks 链表</h2>
+<p>hook 的结构</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">const</span> hook = &#123;<br>  <span class="hljs-attr">memoizedState</span>: <span class="hljs-literal">null</span>,<br>  <span class="hljs-attr">baseQueue</span>: <span class="hljs-literal">null</span>,<br><br>  <span class="hljs-attr">next</span>: &#123;<br>    <span class="hljs-attr">memoizedState</span>: <span class="hljs-literal">null</span>,<br>    <span class="hljs-attr">baseQueue</span>: <span class="hljs-literal">null</span>,<br>    <span class="hljs-attr">next</span>: <span class="hljs-literal">null</span>,<br>  &#125;,<br>&#125;;<br></code></pre></td></tr></table></figure>
 <p>无论是挂载还是更新，只要调用一次hooks函数，就会生成一个hook对象。依次排列，形成链表 存在<font style="color:#d63384">fiber.memoizedState</font>.有一个指针workInProgressHook会记录当前生成的hook对象，可以反应出调用到哪个hook。</p>
-<h3 id="组件挂载"><a href="#组件挂载" class="headerlink" title="组件挂载"></a>组件挂载</h3><p>初次挂载时，组件上没有任何hooks的信息，所以，这个过程主要是在fiber上创建hooks链表。挂载调用的是mountWorkInProgressHook，它会创建hook并将他们连接成链表，同时更新workInProgressHook，最终返回新创建的hook，也就是hooks链表。</p>
-<h3 id="组件更新"><a href="#组件更新" class="headerlink" title="组件更新"></a>组件更新</h3><p>由于存在current树，也会存在currentHook。自然就是有两条hook链表，分别存在workInProgress和current节点的memoizedSate。</p>
+<h3 id="组件挂载">组件挂载</h3>
+<p>初次挂载时，组件上没有任何hooks的信息，所以，这个过程主要是在fiber上创建hooks链表。挂载调用的是mountWorkInProgressHook，它会创建hook并将他们连接成链表，同时更新workInProgressHook，最终返回新创建的hook，也就是hooks链表。</p>
+<h3 id="组件更新">组件更新</h3>
+<p>由于存在current树，也会存在currentHook。自然就是有两条hook链表，分别存在workInProgress和current节点的memoizedSate。</p>
 <p><strong>useContext不会被挂到hook链表上</strong></p>
 
                 
