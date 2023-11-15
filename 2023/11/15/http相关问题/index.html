@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://everyapple.github.io/2023/11/15/http%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98/http%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98/image-3.png">
 <meta property="article:published_time" content="2023-11-15T09:44:12.000Z">
-<meta property="article:modified_time" content="2023-11-15T10:53:14.238Z">
+<meta property="article:modified_time" content="2023-11-15T10:55:51.143Z">
 <meta property="article:author" content="dwood">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://everyapple.github.io/2023/11/15/http%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98/http%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98/image-3.png">
@@ -232,7 +232,7 @@
         
         
         
-          32 分钟
+          31 分钟
         
       </span>
     
@@ -293,7 +293,7 @@
             <p>cache-control优先级大于expires，只看cache-control<br>因为现在都是http1.1，所以关于强缓存真正起到作用的就是 cache-control 字段。</p>
           </div>
 <div class="note note-success">
-            <p>唠一下 etag的生成<br>ETAG:<weak> opaque-tag； weak表示强校验和弱校验。初始带有==W/==表示弱校验。<br>区别在于强校验是逐字节的对比，而弱校验是语义相等。<br>HTTP/1.1协议虽然提出了 ETag，但并没有规定ETag的内容是什么或者说要怎么实现，唯一规定的是ETag的内容必须放在&quot;&quot;内。<br>虽然说他没有规定，但是一般而言：:)<br>ETag生成结论</p><ol><li>对于静态文件（如css、js、图片等），ETag的生成策略是：文件大小的16进制+修改时间</li><li>对于字符串或Buffer，ETag的生成策略是：字符串/Buffer长度的16进制+对应的hash值</li></ol>
+            <p>唠一下 etag的生成<br><span class="label label-primary">ETAG: <weak> opaque-tag</span><br>weak表示强校验和弱校验。初始带有W/表示弱校验。<br>区别在于强校验是逐字节的对比，而弱校验是语义相等。<br>HTTP/1.1协议虽然提出了 ETag，但并没有规定ETag的内容是什么或者说要怎么实现，唯一规定的是ETag的内容必须放在&quot;&quot;内。<br>虽然说他没有规定，但是一般而言：<br>ETag生成结论</p><ol><li>对于静态文件（如css、js、图片等），ETag的生成策略是：文件大小的16进制+修改时间</li><li>对于字符串或Buffer，ETag的生成策略是：字符串/Buffer长度的16进制+对应的hash值</li></ol>
           </div>
 <div class="note note-warning">
             <p>Q:那么 etag变化了，文件一定修改了吗？<br>A:不一定，根据etag的生成算法决定，如果是根据修改时间判断的话，比如编辑了文件但没有改变文件内容的话，则etag改变而文件没有修改。</p>
@@ -334,7 +334,7 @@ Last-Modified是该资源文件最后一次更改时间,服务器会在response 
 </ul>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs js">&lt;meta http-equiv=<span class="hljs-string">&quot;pragma&quot;</span> content=<span class="hljs-string">&quot;no-cache&quot;</span>&gt; <br>&lt;meta http-equiv=&quot;Cache-Control&quot; content=&quot;no-cache, must-revalidate&quot;&gt; <br>&lt;meta http-equiv=&quot;expires&quot; content=&quot;Wed, 26 Feb 1997 00:00:00 GMT&quot;&gt;<br></code></pre></td></tr></table></figure>
 <h3 id="其他">其他</h3>
-<p>强缓存会有两种形式存在，==memory cache== 和 ==disk cache==</p>
+<p>强缓存会有两种形式存在， memory cache  和  disk cache</p>
 <ul>
 <li>memory cache 资源存在内存中，如js，图片，字体等</li>
 <li>disk cache 非js文件，如css。</li>
@@ -345,7 +345,7 @@ Last-Modified是该资源文件最后一次更改时间,服务器会在response 
 <li>缓存处理：引入了cache-control、etag等缓存</li>
 <li>范围请求：在请求头添加了range头域，允许只请求资源的某个部分，返回206，支持断点传续</li>
 <li>新增24个错误码：206 409（请求资源与当前资源冲突） 410（服务器上的资源被永久删除）</li>
-<li>Host头：HTTP1.0中认为每台服务器都绑定一个唯一的IP地址，因此，==请求消息中的URL并没有传递主机名（hostname）==。但随着虚拟主机技术的发展，在一台物理服务器上可以存在多个虚拟主机（Multi-homed Web Servers），并且它们共享一个IP地址。==HTTP1.1的请求消息和响应消息都应支持Host头域，且请求消息中如果没有Host头域会报告一个错误（400 Bad Request）==。有了Host字段，就可以将请求发往同一台服务器上的不同网站，为虚拟主机的兴起打下了基础。</li>
+<li>Host头：HTTP1.0中认为每台服务器都绑定一个唯一的IP地址，因此， 请求消息中的URL并没有传递主机名（hostname） 。但随着虚拟主机技术的发展，在一台物理服务器上可以存在多个虚拟主机（Multi-homed Web Servers），并且它们共享一个IP地址。 HTTP1.1的请求消息和响应消息都应支持Host头域，且请求消息中如果没有Host头域会报告一个错误（400 Bad Request） 。有了Host字段，就可以将请求发往同一台服务器上的不同网站，为虚拟主机的兴起打下了基础。</li>
 <li>持久连接：connection：keep-alive就是tcp默认不关闭，可以被多个请求复用</li>
 <li>管道机制： 在一个tcp连接中，客户端可以同时发起多个请求。</li>
 </ol>
