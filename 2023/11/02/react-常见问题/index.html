@@ -24,7 +24,7 @@
 <meta property="og:description" content="react16做了哪些更新 react16之前，虚拟dom的diff算法 理解是一个递归的过程，树如果复杂的话，会堵塞后面的渲染，交互响应迟钝，出现卡顿。因此引入了fiber架构。他引入了任务优先级制度和requestIdleCallback，循环调度。将之前一根筋的渲染方式拆成了两个部分。  render阶段 也就是reconciliation 插入高优先级任务，被拆分成一个个小的fiber，在">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-11-02T10:56:00.000Z">
-<meta property="article:modified_time" content="2023-11-16T09:25:11.846Z">
+<meta property="article:modified_time" content="2023-11-16T09:33:57.783Z">
 <meta property="article:author" content="dwood">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -502,7 +502,7 @@ componentDidUpdate()</p>
 fiber 是一种纤程。他通过requestIdleCallback 去控制组件渲染。<br>
 vue的渲染机制：vue2使用的Object.defineProperty或者vue3中的proxy对数据做一个劫持。vue能准确的知道视图模版中哪一块需要更新。他本身可以实现精准更新，精确到当前组件的最小粒度。一方面：是给每个组件配置了<span class="label label-primary">监听器</span>，管理视图的依赖收集和数据更新。一方面：他的<strong>模版语法，可以实现静态编译</strong>，react的jsx语法是做不到的。这两者对性能也是有消耗的。但是他就不需要fiber去控制组件渲染，让出浏览器线程这类操作了。</p>
 <h2 id="diff算法">diff算法</h2>
-<p>Diff算法通过key和tag来对节点进行取舍，可直接将复杂的比对拦截掉，然后降级成节点的移动和增删这样比较简单的操作。对oldFiber和新的ReactElement节点的比对，将会生成新的fiber节点，同时标记上effectTag，这些fiber会被连到workInProgress树中，作为新的WIP节点。树的结构因此被一点点地确定，而新的workInProgress节点也基本定型。这意味着，在diff过后，workInProgress节点的beginWork节点就完成了。接下来会进入completeWork阶段</p>
+<p>Diff算法通过key和tag来对节点进行取舍，可直接将复杂的比对拦截掉，然后降级成节点的移动和增删这样比较简单的操作。对oldFiber和新的ReactElement节点的比对，将会生成新的fiber节点，同时标记上effectTag，这些fiber会被连到workInProgress树中，作为新的WIP节点。树的结构因此被一点点地确定，而新的workInProgress节点也基本定型。这意味着，在diff过后，workInProgress节点的beginWork节点就完成了。接下来会进入completeWork阶段。</p>
 
                 
               </div>

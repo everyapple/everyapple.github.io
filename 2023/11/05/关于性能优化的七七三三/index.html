@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://s2.loli.net/2023/11/16/sWE9rRYnUfcLBaV.png">
 <meta property="article:published_time" content="2023-11-05T11:52:22.000Z">
-<meta property="article:modified_time" content="2023-11-16T08:54:06.676Z">
+<meta property="article:modified_time" content="2023-11-16T10:24:41.724Z">
 <meta property="article:author" content="dwood">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://s2.loli.net/2023/11/16/sWE9rRYnUfcLBaV.png">
@@ -221,7 +221,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          796 字
+          1.5k 字
         
       </span>
     
@@ -232,7 +232,7 @@
         
         
         
-          7 分钟
+          13 分钟
         
       </span>
     
@@ -333,6 +333,61 @@ dom一般挂载在根元素下，发生异常后，通过监听onerror事件，�
 <li>TTFB: 页面发出请求，到接收到第一个字节花费的时间 &lt;=100ms</li>
 <li>FID： 首次输入延迟，就是用户触发行为后，到浏览器的响应时间 &lt;=100ms</li>
 <li>CLS: 累积布局偏移 &lt;=0.1</li>
+</ol>
+<h3 id="LCP是什么">LCP是什么</h3>
+<p>最大内容渲染时间，他会随着页面渲染发生变化。指标是实时更新的，会在用户第一次交互后停止更新记录。</p>
+<div class="note note-success">
+            <p>Q:哪些元素被认为最大元素<br>Img，Image，video，background-url()加载的图片，内联或者文本的块级元素</p>
+          </div>
+<blockquote>
+<p>测量工具</p>
+<blockquote>
+<p>lighthouse，web-vitals</p>
+</blockquote>
+</blockquote>
+<h4 id="原生的jsapi测量呢">原生的jsapi测量呢</h4>
+<p>performaceObserve接口</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">new</span> <span class="hljs-title class_">PerformanceObserver</span>(<span class="hljs-function">(<span class="hljs-params">entryList</span>) =&gt;</span> &#123;<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> entry <span class="hljs-keyword">of</span> entryList.<span class="hljs-title function_">getEntries</span>()) &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;LCP candidate:&#x27;</span>, entry.<span class="hljs-property">startTime</span>, entry);<br>  &#125;<br>&#125;).<span class="hljs-title function_">observe</span>(&#123;<span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;largest-contentful-paint&#x27;</span>, <span class="hljs-attr">buffered</span>: <span class="hljs-literal">true</span>&#125;);<br></code></pre></td></tr></table></figure>
+<h4 id="如何优化lcp">如何优化lcp</h4>
+<ol>
+<li>服务端响应的时间</li>
+</ol>
+<ul>
+<li>将变化较少的数据添加缓存</li>
+<li>一般来说http2.0的多路复用，标头压缩都可以提升响应速度</li>
+</ul>
+<ol start="2">
+<li>js，css引起的渲染卡顿</li>
+</ol>
+<ul>
+<li>延迟加载非必要的js async defer</li>
+<li>压缩js，比如gzip</li>
+<li>拆分长任务</li>
+</ul>
+<ol start="3">
+<li>资源加载的时间<br>
+对图片，视频进行优化，压缩大小，比如图片转webp的格式这类</li>
+<li>客户端渲染<br>
+ssr渲染，有可能会降低ttfb的时间</li>
+</ol>
+<h2 id="FID">FID</h2>
+<p>首次用户输入的时间和浏览器响应的时间的延迟</p>
+<h4 id="如何优化">如何优化</h4>
+<ol>
+<li>减少第三方代码的影响</li>
+<li>减少js执行时间</li>
+</ol>
+<ul>
+<li>拆分长任务</li>
+</ul>
+<ol start="3">
+<li>最小化主线程工作</li>
+</ol>
+<ul>
+<li>web worker</li>
+</ul>
+<ol start="4">
+<li>减小请求数量和请求文件大小</li>
 </ol>
 
                 
