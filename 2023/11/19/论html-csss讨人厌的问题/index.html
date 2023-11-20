@@ -1,0 +1,670 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dwood">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="浏览器究竟是如何渲染页面的 通俗的来说，答案无非是构建dom树，构建cssom树，合成render树，进行布局绘制。 那究竟是js的加载阻塞了页面的渲染，还是js的执行阻塞了页面的渲染？ 所以回过头把浏览器渲染的机制从头看一遍。 那如何将html渲染到屏幕上呢？ 关键渲染路径 在浏览器接搜到一个html文档是，会经历一个叫关键渲染路径的步骤。              构造文档对象模型（dom）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论html&#x2F;csss讨人厌的问题">
+<meta property="og:url" content="https://everyapple.github.io/2023/11/19/%E8%AE%BAhtml-csss%E8%AE%A8%E4%BA%BA%E5%8E%8C%E7%9A%84%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:site_name" content="pplWood">
+<meta property="og:description" content="浏览器究竟是如何渲染页面的 通俗的来说，答案无非是构建dom树，构建cssom树，合成render树，进行布局绘制。 那究竟是js的加载阻塞了页面的渲染，还是js的执行阻塞了页面的渲染？ 所以回过头把浏览器渲染的机制从头看一遍。 那如何将html渲染到屏幕上呢？ 关键渲染路径 在浏览器接搜到一个html文档是，会经历一个叫关键渲染路径的步骤。              构造文档对象模型（dom）">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://picx.zhimg.com/80/v2-d567cb08f77f85f8b462ea610bdb6d8b_1440w.webp?source=2c26e567">
+<meta property="article:published_time" content="2023-11-19T11:56:54.000Z">
+<meta property="article:modified_time" content="2023-11-19T13:18:01.092Z">
+<meta property="article:author" content="dwood">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://picx.zhimg.com/80/v2-d567cb08f77f85f8b462ea610bdb6d8b_1440w.webp?source=2c26e567">
+  
+  
+  
+  <title>论html/csss讨人厌的问题 - pplWood</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"everyapple.github.io","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start --><meta name="referrer" content="no-referrer" /><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.0.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="论html/csss讨人厌的问题"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-11-19 19:56" pubdate>
+          2023年11月19日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          17 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">论html/csss讨人厌的问题</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <meta name="referrer" content="no-referrer" />
+<h2 id="浏览器究竟是如何渲染页面的">浏览器究竟是如何渲染页面的</h2>
+<p>通俗的来说，答案无非是构建dom树，构建cssom树，合成render树，进行布局绘制。<br>
+那究竟是js的加载阻塞了页面的渲染，还是js的执行阻塞了页面的渲染？<br>
+所以回过头把浏览器渲染的机制从头看一遍。</p>
+<p>那如何将html渲染到屏幕上呢？</p>
+<h3 id="关键渲染路径">关键渲染路径</h3>
+<p>在浏览器接搜到一个html文档是，会经历一个叫<strong>关键渲染路径</strong>的步骤。</p>
+<div class="note note-primary">
+            <p>构造文档对象模型（dom），构造css对象模型（cssom），生成渲染树，布局，绘制</p>
+          </div>
+<h4 id="构造dom树">构造dom树</h4>
+<ol>
+<li>转化 ： 浏览器从磁盘（缓存）读取html的原始字节，将他们转化为单个字符。</li>
+<li>分词（词法分析）： 将上一步骤得到的字符串转为Token。</li>
+<li>分析（语法分析）： 将token转为对象nodes，定义了他们的属性和规则</li>
+<li>构造dom树：html定义了不同标签之间的关系，所以最终浏览器得到的对象是一个树形结构。<br>
+整个过程会将 HTML 大概处理成为上述类型的树状结构, 最终输出文档对象模型 (DOM)，之后浏览器会使用该对象模型进行其他处理。</li>
+</ol>
+<h4 id="构造cssom树">构造cssom树</h4>
+<p>和上述类似，Css 文件经过转化为字符，然后进行分词、转化为节点最终拼接为一个树状的 Cssom。</p>
+<div class="note note-success">
+            <p>Q: 为什么css也是树状结构<br>A: 因为css规则是向下级联的嵌套方案，浏览器在计算任何节点的时候，会从适用于该节点的最通用的规则开始计算。比如，如果需要计算的节点是 body 元素的子元素，那么它会应用 body 的样式，之后会一层一层进行递归该过程从而得到该节点最终的样式。</p>
+          </div>
+<p>特殊提问？</p>
+<blockquote>
+<p>css解析和dom解析是否是并行呢？<br>
+css 如果写在style标签里，还是会被html parse执行的。大部分情况下，css文件会用外联加载css文件。<br>
+<strong>当使用link标签引入css文件时</strong><br>
+cssom的生成时机不会影响dom的改变（js文件因为可能会对dom进行操作，所以会影响），所以当html parse遇到link标签的导入时，他不会去等待这个文件的下载和解析，然后再去解析后续dom，而是在加载style脚本的同时，继续解析dom。这个就是所谓的并行关系（也就是非阻塞关系）<br>
+当加载完样式脚本后，需要去解析link中的样式内容生成cssom树上的节点，这个过程就是parse stylesheet，主线程依然需要他去完成。<br>
+这个过程必然会和parse html抢占主线程资源。<br>
+因此也就是说 <strong>css加载不会阻塞dom的解析，但是会阻塞dom的渲染，也会阻塞后面js的执行</strong><br>
+存在特例，&quot;<head>&quot;尾部的 CSS 会阻塞位于其后紧跟的 DOM 的解析<br>
+这种情况被称为 FOUC(Flash of Unstyled Content), 样式闪烁, 因为 First Plain 机制的存在, 会将已经解析的 DOM 和 CSSOM 结合生成渲染树并进行部分渲染, 当该 CSS 加载完成后, 才会继续解析 DOM, 而且之前已经渲染的内容将会根据解析完成的 CSS 进行重绘.<br>
+在 Firefox, Chrome, Edge 中，如果 <link rel="stylesheet" href="xxx"> 后面跟着 <script>, 则 CSS 加载完成后, 才能触发 DOMContentLoaded<br>
+对于 JS ，在交互上，想要正确的操作 DOM，将 JS 放在 HTML 尾部，当解析到 JS 时，虽然没有触发 DOMCOntentLoaded，但是已经可以正确操作 DOM，减少加载时间，将 JS 异步化，对于外部 JS，采用添加 defer 属性或者 async 引入<br>
+而 CSS 在头部不会阻塞 DOM 的解析，但是跟在其后的 JS 在 CSS 加载的这段时间是不能够被执行的, 即使 JS 下载完成时间比 CSS 要快, 优先加载 CSS 避免 FOUC 的出现</p>
+</blockquote>
+<h4 id="生成render树">生成render树</h4>
+<p>浏览器合并dom和cssom，组成一个具有所有可见节点样式和内容的render tree<br>
+也因为合成render树这一过程，需要dom树和cssom树都生成完毕，因此css加载会堵塞dom的渲染。</p>
+<h4 id="布局">布局</h4>
+<p>布局过程的输出是一个“盒子模型”，它精确地捕获视口内每个元素的确切位置和大小：所有相对测量值都转换为屏幕上的绝对像素。</p>
+<h4 id="绘制">绘制</h4>
+<p>既然浏览器已经明确的知道哪些节点是可见的，以及它们的样式和几何形状，我们可以将此信息传递到最后阶段，它将 RenderTree 中的每个节点转换为屏幕上的实际像素，此步骤通常称为“Paint”。<br>
+<img src="https://picx.zhimg.com/80/v2-d567cb08f77f85f8b462ea610bdb6d8b_1440w.webp?source=2c26e567" srcset="/img/loading.gif" lazyload alt="过程"></p>
+<h3 id="js会不会影响渲染呢">js会不会影响渲染呢</h3>
+<p><strong>外部脚本链接的加载和执行只会影响后续 Dom 的解析和渲染，对于脚本之前的的 Dom 并不会阻塞它的解析以及渲染，这也就是为什么我们常说将 js 放在底部。</strong><br>
+而内联 肯定影响 别想了<br>
+defer &amp; async 不会阻塞渲染<br>
+defer会在domcontentloaded之前执行</p>
+<h2 id="结论">结论</h2>
+<ol>
+<li>普通情况下css 脚本的加载并不会阻塞后续 Dom Tree 的生成。（Css 文件加载不阻塞解析特性）</li>
+<li>同时 css 脚本的加载是会阻塞 RenderTree 的合成，从而阻塞页面的渲染（Css 文件加载渲染阻塞特性）。</li>
+<li>特殊情况下，比如 link 的样式脚本后存在 JS 文件，那么此时 Css 代码的加载是会阻塞后续 JS 脚本的执行从而 JS 脚本会阻塞后续 Dom 的解析，从而变相相当于阻塞了 Js 代码之后的 Dom 解析。</li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>论html/csss讨人厌的问题</div>
+      <div>https://everyapple.github.io/2023/11/19/论html-csss讨人厌的问题/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dwood</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年11月19日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/11/15/http%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98/" title="关于http的一一二二">
+                        <span class="hidden-mobile">关于http的一一二二</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
