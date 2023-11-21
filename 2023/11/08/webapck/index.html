@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://secure2.wostatic.cn/static/h6nhe4sbHRRSpVuZPD8xep/image.png?auth_key=1700037699-sDvdM4jTGfxTqto6uqXnWc-0-451a9aa841a3d84b3b32a1b4ee3848fd">
 <meta property="article:published_time" content="2023-11-08T06:33:11.000Z">
-<meta property="article:modified_time" content="2023-11-15T09:53:03.247Z">
+<meta property="article:modified_time" content="2023-11-21T13:10:02.882Z">
 <meta property="article:author" content="dwood">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://secure2.wostatic.cn/static/h6nhe4sbHRRSpVuZPD8xep/image.png?auth_key=1700037699-sDvdM4jTGfxTqto6uqXnWc-0-451a9aa841a3d84b3b32a1b4ee3848fd">
@@ -221,7 +221,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4.3k 字
+          4.5k 字
         
       </span>
     
@@ -232,7 +232,7 @@
         
         
         
-          37 分钟
+          38 分钟
         
       </span>
     
@@ -494,7 +494,7 @@ wds（webpack-dev-server）和服务端之间建立一个websockt连接，进行
 </ul>
 <p>钩子：make  afterCompiler emit</p>
 <h4 id="注册hooks">注册hooks</h4>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs JavaScript"><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">TestPlugins</span>&#123;<br>  <span class="hljs-title function_">constructor</span>(<span class="hljs-params"></span>)&#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;constructor&#x27;</span>)<br>  &#125;<br>  <br>  <span class="hljs-title function_">apply</span>(<span class="hljs-params">compiler</span>)&#123;<br>    compiler.<span class="hljs-property">hooks</span>.<span class="hljs-property">emit</span>.<span class="hljs-title function_">tap</span>(<span class="hljs-string">&#x27;testPlugin&#x27;</span>,<span class="hljs-function">(<span class="hljs-params">compilation</span>)=&gt;</span>&#123;&#125;)<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs JavaScript"><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">TestPlugins</span>&#123;<br>  <span class="hljs-title function_">constructor</span>(<span class="hljs-params"></span>)&#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;constructor&#x27;</span>)<br>  &#125;<br>  <span class="hljs-title function_">apply</span>(<span class="hljs-params">compiler</span>)&#123;<br>    compiler.<span class="hljs-property">hooks</span>.<span class="hljs-property">emit</span>.<span class="hljs-title function_">tap</span>(<span class="hljs-string">&#x27;testPlugin&#x27;</span>,<span class="hljs-function">(<span class="hljs-params">compilation</span>)=&gt;</span>&#123;&#125;)<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 <h2 id="loader和plugin的区别">loader和plugin的区别</h2>
 <p>loader：文件加载器，加载资源文件，进行编译 压缩</p>
 <p>plugin： 插件，解决loader无法解决的事情</p>
@@ -512,6 +512,8 @@ wds（webpack-dev-server）和服务端之间建立一个websockt连接，进行
 <p>1.compiler  包含了所有配置信息</p>
 <p>2.compilation  作为回调的参数 资源的构建</p>
 <p>插件 是一个函数 或者是 包含apply方法的对象</p>
+<h2 id="webpack的优化">webpack的优化</h2>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=Mzg3NjU2OTE1Mw==&amp;mid=2247486291&amp;idx=1&amp;sn=03f5d60f7ce05fb63f619516b6e44175&amp;scene=21#wechat_redirect">https://mp.weixin.qq.com/s?__biz=Mzg3NjU2OTE1Mw==&amp;mid=2247486291&amp;idx=1&amp;sn=03f5d60f7ce05fb63f619516b6e44175&amp;scene=21#wechat_redirect</a></p>
 
                 
               </div>

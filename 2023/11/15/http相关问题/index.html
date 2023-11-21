@@ -26,7 +26,7 @@
 <meta property="og:image" content="https://s2.loli.net/2023/11/15/M1xqdRwAlSy4EoD.png">
 <meta property="og:image" content="https://s2.loli.net/2023/11/15/IAUNJOQkyCH8ahr.png">
 <meta property="article:published_time" content="2023-11-15T09:44:12.000Z">
-<meta property="article:modified_time" content="2023-11-16T08:42:09.371Z">
+<meta property="article:modified_time" content="2023-11-21T13:16:15.005Z">
 <meta property="article:author" content="dwood">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://s2.loli.net/2023/11/15/M1xqdRwAlSy4EoD.png">
@@ -222,7 +222,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4.8k 字
+          5.4k 字
         
       </span>
     
@@ -233,7 +233,7 @@
         
         
         
-          40 分钟
+          46 分钟
         
       </span>
     
@@ -318,6 +318,12 @@ Last-Modified是该资源文件最后一次更改时间,服务器会在response 
 <p>浏览器会将请求头设置为max-age:0，跳过强制缓存，但还是会走协商缓存，浏览器会对本地文件过期，但会带上其他两个头。根据if-none-match、if-modified-since判断。也就是说会检查新鲜度。</p>
 <h4 id="ctrl-F5强制刷新">ctrl+F5强制刷新</h4>
 <p>跳过强缓存和协商缓存，直接从服务器拉最新的资源。浏览器不仅会对本地文件过期，也不会带上其他两个头。相当于之前从来没有请求过，也就是200</p>
+<h3 id="什么时候走缓存">什么时候走缓存</h3>
+<p>作用于网站「导航阶段」的网络请求的「开始阶段」</p>
+<ol>
+<li>在service worker之后</li>
+<li>在dns查询之前</li>
+</ol>
 <h3 id="如何不走缓存">如何不走缓存</h3>
 <h4 id="cache-control">cache-control</h4>
 <ul>
@@ -387,6 +393,23 @@ Last-Modified是该资源文件最后一次更改时间,服务器会在response 
           </div>
 <h2 id="get和post的区别">get和post的区别</h2>
 <p><a target="_blank" rel="noopener" href="https://github.com/febobo/web-interview/issues/145">https://github.com/febobo/web-interview/issues/145</a></p>
+<h2 id="webSocket">webSocket</h2>
+<p>WebSocket是Web应用程序的传输协议，它提供了双向的，按序到达的数据流。他是一个Html5协议，WebSocket的连接是持久的，他通过在客户端和服务器之间保持双工连接，服务器的更新可以被及时推送给客户端，而不需要客户端以一定时间间隔去轮询。<br>
+<strong>适合场景</strong>：实时性要求高的场景：社交聊天、弹幕、多玩家游戏、协同编辑、股票基金实时报价、体育实况更新、视频会议/聊天、基于位置的应用、在线教育、智能家居等需要高实时的场景。</p>
+<p>与基于http协议的通信来比，他可以带来更低的延迟性，更高的连接数，和更大的带宽。</p>
+<div class="note note-primary">
+            <p>websocket建立的过程</p><ol><li>客户端向服务端发起请求，进行一个协议升级</li><li>服务端如果支持websocket，就升级到websocket，然后返回状态码101</li><li>收到服务端响应后，就建立连接了。</li></ol>
+          </div>
+<h2 id="ssr-高并发场景下的策略">ssr 高并发场景下的策略</h2>
+<h3 id="cdn缓存"><a target="_blank" rel="noopener" href="https://claude-ray.com/2020/07/03/ssr-cdn-cache/">cdn缓存</a></h3>
+<p>cdn的回源就是：当有用户访问某一个URL的时候，若是被解析到的那个CDN节点没有缓存响应的内容，或者是缓存已经到期，就会回源站去获取。若是没有人访问，那么CDN节点不会主动去源站拿的。</p>
+<ol>
+<li>CDN节点没有对应资源时主动到源站获取资源；</li>
+<li>缓存失效后，CDN节点到源站获取资源；</li>
+<li>是在CDN管理后台或者使用开放接口主动刷新触发回源。</li>
+</ol>
+<h3 id="我们设置了SSR的60ms超时，也就是超过60ms的请求走正常的CSR渲染链路。">我们设置了SSR的60ms超时，也就是超过60ms的请求走正常的CSR渲染链路。</h3>
+<h3 id="配置开关-作为紧急降级">配置开关 作为紧急降级</h3>
 
                 
               </div>
