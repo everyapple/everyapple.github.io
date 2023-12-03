@@ -1,0 +1,754 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dwood">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="React的核心概念  基于两点介绍  Fiber架构和schedule调度 优先级机制  Fiber是什么 Fiber是什么？它是React的最小工作单元，在React的世界中，一切都可以是组件。在普通的HTML页面上，人为地将多个DOM元素整合在一起可以组成一个组件，HTML标签可以是组件（HostComponent），普通的文本节点也可以是组件（HostText）。 每一个组件都可以对应一个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="react 核心概念">
+<meta property="og:url" content="https://everyapple.github.io/2023/11/02/react-%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5/index.html">
+<meta property="og:site_name" content="pplWood">
+<meta property="og:description" content="React的核心概念  基于两点介绍  Fiber架构和schedule调度 优先级机制  Fiber是什么 Fiber是什么？它是React的最小工作单元，在React的世界中，一切都可以是组件。在普通的HTML页面上，人为地将多个DOM元素整合在一起可以组成一个组件，HTML标签可以是组件（HostComponent），普通的文本节点也可以是组件（HostText）。 每一个组件都可以对应一个">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-11-02T09:16:48.000Z">
+<meta property="article:modified_time" content="2023-12-03T16:48:05.160Z">
+<meta property="article:author" content="dwood">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>react 核心概念 - pplWood</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"everyapple.github.io","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start --><meta name="referrer" content="no-referrer" /><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.0.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="react 核心概念"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-11-02 17:16" pubdate>
+          2023年11月2日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          32 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">react 核心概念</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1>React的核心概念</h1>
+<hr>
+<p>基于两点介绍</p>
+<ol>
+<li>Fiber架构和schedule调度</li>
+<li>优先级机制</li>
+</ol>
+<h2 id="Fiber是什么">Fiber是什么</h2>
+<p>Fiber是什么？它是React的最小工作单元，在React的世界中，一切都可以是组件。在普通的HTML页面上，人为地将多个DOM元素整合在一起可以组成一个组件，HTML标签可以是组件（HostComponent），普通的文本节点也可以是组件（HostText）。<br>
+<strong>每一个组件都可以对应一个fiber节点</strong>，互相嵌套，组成fiber树。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">var</span> fiber = &#123;<br>  alternate,<br>  child,<br>  <span class="hljs-attr">elementType</span>: <span class="hljs-function">() =&gt;</span> &#123;&#125;,<br>  <span class="hljs-attr">memoizedProps</span>: <span class="hljs-literal">null</span>,<br>  <span class="hljs-attr">memoizedState</span>: <span class="hljs-literal">null</span>, <span class="hljs-comment">// 在函数组件中，memoizedState用于保存hook链表</span><br>  <span class="hljs-attr">pendingProps</span>: &#123;&#125;,<br>  <span class="hljs-keyword">return</span>,<br>  sibling,<br>  stateNode,<br>  tag, <span class="hljs-comment">// fiber的节点类型，初次渲染时，函数组件对应的tag为2，后续更新过程中对应的tag为0</span><br>  <span class="hljs-attr">type</span>: <span class="hljs-function">() =&gt;</span> &#123;&#125;<br>  <span class="hljs-attr">updateQueue</span>: <span class="hljs-literal">null</span>,<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="Fiber架构下的react是如何更新的">Fiber架构下的react是如何更新的</h3>
+<p>react的一次更新分为两个阶段</p>
+<ul>
+<li>render阶段</li>
+<li>commit阶段</li>
+</ul>
+<h5 id="render阶段">render阶段</h5>
+<blockquote>
+<p>render阶段是 scheduler调度+ reconcile 就是把虚拟dom变成fiber<br>
+render阶段是在内部构建一颗新的fiber树，一般成为workInProgress树，构建过程依据现有的fiber树（current树），从root开始深度遍历再回溯到root。创建effect链表</p>
+</blockquote>
+<p>每个fiber会经历两个阶段：</p>
+<ul>
+<li>beginWorker: 组件状态的计算，diff的操作，render函数的执行</li>
+<li>completeWorker: 被跳过的优先级update收集， effect链表的收集</li>
+</ul>
+<p><strong>构建work树过程会有一个指针记录构建到哪个fiber节点，以便更新任务可恢复</strong></p>
+<h5 id="beginWorker">beginWorker</h5>
+<p>它的职能主要是<strong>节点更新的入口，不会直接更新</strong>，就是拦截无需更新的节点。</p>
+<blockquote>
+<p>处理当前遍历的fiber，返回它的子fiber，构建workInProgress树。<br>
+核心更新的过程在于 <strong>计算状态</strong>  和 <strong>diff算法</strong></p>
+</blockquote>
+<h5 id="如何区分初始化和更新">如何区分初始化和更新</h5>
+<p><strong>判断是否存在current</strong><br>
+初始化不会有current，更新时已经存在current树<br>
+根据节点是否是首次渲染 生成fiber 或者diff fiber</p>
+<h5 id="commit阶段">commit阶段</h5>
+<blockquote>
+<p>把fiber变成dom</p>
+</blockquote>
+<ul>
+<li>不可中断</li>
+<li>根据收集到的变化节点更新dom，异步执行useeffect 同步执行uselayouteffect</li>
+</ul>
+<blockquote>
+<p>这两个任务都是独立的React任务，都会被schedule调度。<br>
+render阶段的优先级是根据本次的更新的优先级决定的，高优先级可以打断低优先级<br>
+commit阶段的优先级不可打断，按最高优先级来执行</p>
+</blockquote>
+<h4 id="schedule调度">schedule调度</h4>
+<p>根据优先级进行调度，保证最高优先级执行<br>
+根据时间片对任务进行中止和恢复。</p>
+<h4 id="优先级机制">优先级机制</h4>
+<p><strong>如何将优先级机制融入 react 运行时</strong></p>
+<p><strong>1. 获取本次更新优先级</strong></p>
+<p>调用 <code>requestUpdateLane</code> 函数获取本次更新任务的优先级</p>
+<p>优先级选取判断顺序如下</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-title class_">SyncLane</span>  &gt;&gt;  <span class="hljs-title class_">TransitionLane</span>  &gt;&gt;  <span class="hljs-title class_">UpdateLane</span>  &gt;&gt;  <span class="hljs-title class_">EventLane</span><br></code></pre></td></tr></table></figure>
+<p><strong>2. 创建 Update 对象</strong></p>
+<p>setState 生成 Update 对象，每个对象里有个 lanes 属性</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">createUpdate</span>(<span class="hljs-params">eventTime, lane</span>) &#123;<br>  <span class="hljs-keyword">var</span> update = &#123;<br>    <span class="hljs-attr">eventTime</span>: eventTime,<br>    <span class="hljs-attr">lane</span>: lane,<br>    <span class="hljs-attr">tag</span>: <span class="hljs-title class_">UpdateState</span>,<br>    <span class="hljs-attr">payload</span>: <span class="hljs-literal">null</span>,<br>    <span class="hljs-attr">callback</span>: <span class="hljs-literal">null</span>,<br>    <span class="hljs-attr">next</span>: <span class="hljs-literal">null</span><br>  &#125;;<br>  <span class="hljs-keyword">return</span> update;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><strong>3. 关联优先级</strong></p>
+<ul>
+<li>
+<p>将优先级合并到当前 fiber 节点的 lanes 属性中</p>
+</li>
+<li>
+<p>将优先级合并到父级节点的 childLanes 中 (告诉父节点他的子节点有多少条赛道要跑)</p>
+</li>
+<li>
+<p>将调度任务优先级合并到当前 react 应用根节点上</p>
+</li>
+<li>
+<p>计算当前任务优先级赛道占用的开始时间</p>
+</li>
+</ul>
+<p>commit 阶段结束之后会释放占用的优先级</p>
+<p><strong>4. 发起调度</strong></p>
+<ul>
+<li>
+<p>高优先级任务打断低优先级任务</p>
+<p>每一次调度都会对正在进行任务和当前任务最高优先级做比较，如果不相等，就代表有高优先级任务进来，需要打断当前正在的任务。</p>
+</li>
+<li>
+<p>低优先级任务重启</p>
+<p>协调 (reconcile) 的下一个阶段是渲染 (renderer)，也就是我们说的 commit 阶段，在此阶段末尾，会调用 ensureRootIsScheduled 发起一次新的调度，执行尚未完成的低优先级任务</p>
+</li>
+<li>
+<p>饥饿任务问题</p>
+<p>高优先级任务执行完毕则重启低优先级任务，如果持续有高优先级任务插入，如何处理？</p>
+<p>每次调度的开始，都会先检查下有没有过期任务，如果有的话，下一次就会以同步优先级进行 render 任务(reconcile)，同步优先级就是最高的优先级，不会被打断</p>
+</li>
+</ul>
+<p>交互就会生成更新，不同的更新，优先级不一样。<br>
+react中人为的进行了划分，最终目的是调度轻重缓急，因此产生了一套事件调度的优先级机制。</p>
+<ul>
+<li>事件优先级： 按照用户的交互产生的</li>
+<li>更新优先级： 事件导致的react产生的update对象的优先级（update.lane)</li>
+<li>任务优先级： 产生update对象后，react去执行的优先级</li>
+<li>调度优先级： scheduler根据react的任务生的调度任务的优先级</li>
+</ul>
+<hr>
+<h2 id="事件优先级">事件优先级</h2>
+<ol>
+<li>离散事件 click，keydown等不连续的 优先级0</li>
+<li>用户阻塞事件 scroll drag mouseover 连续，阻塞渲染 优先级1</li>
+<li>连续事件 canplay error audio标签的canplay等等，优先2 最高</li>
+</ol>
+<h3 id="派发事件优先级">派发事件优先级</h3>
+<p>事件优先级在注册阶段确定，在root上注册时，会根据不同事件发不同的监听，最后绑定到root<br>
+然后借助scheduler中的runWithPriorty函数实现执行事件处理函数。</p>
+<h2 id="更新优先级">更新优先级</h2>
+<p>以setState为例，事件的执行会导致setState执行，而setState本质上是调用enqueueSetState，生成一个update对象，这时候会计算它的更新优先级，即update.lane</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">const</span> classComponentUpdater = &#123;<br>  <span class="hljs-title function_">enqueueSetState</span>(<span class="hljs-params">inst, payload, callback</span>) &#123;<br>    ...<br><br>    <span class="hljs-comment">// 依据事件优先级创建update的优先级</span><br>    <span class="hljs-keyword">const</span> lane = <span class="hljs-title function_">requestUpdateLane</span>(fiber, suspenseConfig);<br><br>    <span class="hljs-keyword">const</span> update = <span class="hljs-title function_">createUpdate</span>(eventTime, lane, suspenseConfig);<br>    update.<span class="hljs-property">payload</span> = payload;<br>    <span class="hljs-title function_">enqueueUpdate</span>(fiber, update);<br><br>    <span class="hljs-comment">// 开始调度</span><br>    <span class="hljs-title function_">scheduleUpdateOnFiber</span>(fiber, lane, eventTime);<br>    ...<br>  &#125;,<br>&#125;;<br></code></pre></td></tr></table></figure>
+<p><strong>requestUpdateLane</strong>:找出scheduler中记录的优先级，计算更新：lane.</p>
+<h2 id="任务优先级">任务优先级</h2>
+<p>假设产生一前一后两个update，它们持有各自的更新优先级，也会被各自的更新任务执行。经过优先级计算，如果后者的任务优先级高于前者的任务优先级，那么会让Scheduler取消前者的任务调度；如果后者的任务优先级等于前者的任务优先级，后者不会导致前者被取消，而是会复用前者的更新任务，将两个同等优先级的更新收敛到一次任务中；如果后者的任务优先级低于前者的任务优先级，同样不会导致前者的任务被取消，而是在前者更新完成后，再次用Scheduler对后者发起一次任务调度。</p>
+<p><strong>保证高优先级任务及时响应，收敛同等优先级的任务调度。</strong></p>
+<blockquote>
+<p>如果已经存在一个更新任务， 获得新任务的更新优先级之后，会进行比较，判断是否需要重新发起调度，如果需要，则计算调度优先级</p>
+</blockquote>
+<h2 id="调度优先级">调度优先级</h2>
+<p>调度优先级由任务优先级计算得出，在ensureRootIsScheduled更新真正让Scheduler发起调度的时候，会去计算调度优先级。</p>
+<p>在Scheduler中，分别用过期任务队列和未过期任务的队列去管理它内部的task，过期任务的队列中的task根据过期时间去排序，最早过期的排在前面，便于被最先处理。而过期时间是由调度优先级计算的出的，不同的调度优先级对应的过期时间不同。</p>
+<h4 id="小总结">小总结</h4>
+<p>这四种优先级 是<strong>递进</strong>的关系<br>
+事件优先级由事件本身决定，更新优先级由事件计算得出，然后放到root.pendingLanes，任务优先级来自root.pendingLanes中最紧急的那些lanes对应的优先级，调度优先级根据任务优先级获取。几种优先级环环相扣，保证了高优任务的优先执行。</p>
+<h4 id="参考">参考</h4>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000038947307">react优先级机制</a></li>
+<li><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000039131960">Concurrent模式下React的更新行为- 优先级模型</a></li>
+<li><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000039101758">react的调度机制原理</a></li>
+</ul>
+<hr>
+<h4 id="双缓冲机制">双缓冲机制</h4>
+<p>开始更新后，会有两棵树，一颗是workInProgress树，一棵是现有的current树，是当前页面显示的树。在更新未完成的时候，所有更新会在workInProgress树上，页面始终展示current，更新结束之后，两者替换。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>react 核心概念</div>
+      <div>https://everyapple.github.io/2023/11/02/react-核心概念/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dwood</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年11月2日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/11/02/hooks-%E9%93%BE%E8%A1%A8/" title="hooks 链表">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">hooks 链表</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/11/02/react-state%E8%AE%A1%E7%AE%97%E6%9B%B4%E6%96%B0-%E5%8E%9F%E7%90%86/" title="react state计算更新 原理">
+                        <span class="hidden-mobile">react state计算更新 原理</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

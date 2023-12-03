@@ -1,0 +1,847 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="dwood">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="react16做了哪些更新 react16之前，虚拟dom的diff算法 理解是一个递归的过程，树如果复杂的话，会堵塞后面的渲染，交互响应迟钝，出现卡顿。因此引入了fiber架构。他引入了任务优先级制度和requestIdleCallback，循环调度。将之前一根筋的渲染方式拆成了两个部分。  render阶段 也就是reconciliation 插入高优先级任务，被拆分成一个个小的fiber，在">
+<meta property="og:type" content="article">
+<meta property="og:title" content="react 常见问题">
+<meta property="og:url" content="https://everyapple.github.io/2023/11/02/react-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:site_name" content="pplWood">
+<meta property="og:description" content="react16做了哪些更新 react16之前，虚拟dom的diff算法 理解是一个递归的过程，树如果复杂的话，会堵塞后面的渲染，交互响应迟钝，出现卡顿。因此引入了fiber架构。他引入了任务优先级制度和requestIdleCallback，循环调度。将之前一根筋的渲染方式拆成了两个部分。  render阶段 也就是reconciliation 插入高优先级任务，被拆分成一个个小的fiber，在">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-11-02T10:56:00.000Z">
+<meta property="article:modified_time" content="2023-12-03T14:11:08.071Z">
+<meta property="article:author" content="dwood">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>react 常见问题 - pplWood</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"everyapple.github.io","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start --><meta name="referrer" content="no-referrer" /><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.0.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="react 常见问题"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-11-02 18:56" pubdate>
+          2023年11月2日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          44 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">react 常见问题</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="react16做了哪些更新">react16做了哪些更新</h2>
+<p>react16之前，虚拟dom的diff算法 理解是一个递归的过程，树如果复杂的话，会堵塞后面的渲染，交互响应迟钝，出现卡顿。因此引入了fiber架构。他引入了任务优先级制度和requestIdleCallback，循环调度。将之前一根筋的渲染方式拆成了两个部分。</p>
+<ol>
+<li>render阶段 也就是reconciliation 插入高优先级任务，被拆分成一个个小的fiber，在浏览器的<strong>空闲时间</strong>做diff</li>
+<li>commit阶段 不可打断， 直接执行最高优先级任务</li>
+</ol>
+<p><strong>由于render阶段可以打断 + 任务优先级问题</strong>，使得很多生命周期被多次执行。因此react17之后componentWillMount,componentWillUpdate, componentWillReceivieProps被取缔。</p>
+<p><strong>引入了workProgressHook和currentHook</strong>，构建了两个workInProgress和current树，两个链表互相引用，如果workInProgress树生成失败，则更新失败，但是页面不会崩溃。</p>
+<h2 id="为什么-react要用hooks链表呢">为什么 react要用hooks链表呢</h2>
+<p>如果有多个同个hook调用，还需要有调用的先后顺序，使用next串联所有的hook，同时有一个workProcessHook指针记录当前调用的是哪个hook，方便下次更新时获取上一次更新的对象。在下一次更新时，再次执行hook，就会去找到当前运行节点的链表。</p>
+<p>链表的好处在于，即便暂停了，也可以用next记录下一次执行的节点，一旦浏览器有了空余时间，可以直接从这个next开始恢复。</p>
+<h2 id="为什么只能在函数最外层调用HOOK，不能在循环，条件里调用">为什么只能在函数最外层调用HOOK，不能在循环，条件里调用</h2>
+<p>因为hook每次调用都会生成一个hook链表挂在fiber.memoizedstate上，按顺序挂的。挂载和更新必须保证是队列是一致的，不然会引起异常报错。</p>
+<h2 id="react-hooks的引入解决了什么">react hooks的引入解决了什么</h2>
+<p>react的设计思想： 数据驱动视图。<br>
+<code>view = fn(state) </code></p>
+<h3 id="hooks出现前的逻辑复用">hooks出现前的逻辑复用</h3>
+<p>主要是通过hoc和render props 解决，面对复杂业务，会引发<strong>嵌套地狱</strong>和<strong>引发diff算法性能问题</strong></p>
+<blockquote>
+<p>在react16出现之前，函数组件是一个无状态的组件，为什么呢？ 因为16以前只有在类组件更新时会生成一个实例。16之后引入fiber，每个节点都有对应的案例。</p>
+</blockquote>
+<h3 id="hooks的本质">hooks的本质</h3>
+<p><strong>闭包</strong> + <strong>两个链表</strong></p>
+<blockquote>
+<p>闭包</p>
+<blockquote>
+<p>有权访问另一个函数里的变量和方法的函数。通过闭包可以突破作用域的特点，将函数内部的方法和变量传到外部。</p>
+</blockquote>
+</blockquote>
+<p>两个链表分别是：</p>
+<ol>
+<li>hooks链表</li>
+<li>update链表 是一个环形链表，这样呢  尾部遍历完可以直接找到第一个头，在尾部插入也会快速定位，不需要遍历。</li>
+</ol>
+<h2 id="setState为什么默认是异步，什么时候是同步？">setState为什么默认是异步，什么时候是同步？</h2>
+<p><strong>这里的异步同步不同于promise的那种，指的是setState之后数据会不会立马变化。</strong><br>
+在setState方法中，有一个字段isBatchingUpdates可以判断是否直接更新还是批量。<br>
+isBatchingUpdates为true，代表批量更新，也就是异步。<strong>默认为false</strong><br>
+react有一个函数batchedUpdates会把这个值isBatchingUpdates变为true，也就是变为异步。因此只要绕过react事件机制的方法都是同步的。因为react在调用事件处理机制时都会调用这个batchedUpdates这个方法。<br>
+<strong>本身也可以通过setstate或者usestate第二个参数返回一个callback，也可以立马获取。</strong><br>
+react17中暴露了这个方法<code>batchedUpdates</code>，包一下也可以批量更新。<br>
+react18中直接处理了 全都是批量更新。<br>
+具体来说</p>
+<ul>
+<li>react引发的事件处理 （onclick等） 异步</li>
+<li>绕过react通过绑定addeventlistner，或者settimeout等等 同步</li>
+</ul>
+<h2 id="useContext为什么不会被挂到hook链表上">useContext为什么不会被挂到hook链表上</h2>
+<p>因为在初始化和更新时会有两套不同的函数执行，mount 和 update，但是useContext只有一套代码，都是readContext.所以不需要挂载链表上。<br>
+原理类似于观察者模式。Provider上的值发生变化，通知给context和consumer</p>
+<h2 id="useContext-和-redux-的区别">useContext 和 redux 的区别</h2>
+<ul>
+<li>context
+<ul>
+<li>适合做全局管理</li>
+<li>避免props传递的繁琐</li>
+<li>如果组件依赖了context， 只要局部更新，组件都会一起更新，加上memo也没用，因为memo依赖的是props</li>
+<li>一般情况下可以替代redux</li>
+</ul>
+</li>
+<li>redux
+<ul>
+<li>去中心化思想，适合一些编辑器的场景，可以多状态</li>
+<li>多个组件，或者多个页面共享状态</li>
+<li>维护起来麻烦，新增的属性需要一一去添加</li>
+</ul>
+</li>
+</ul>
+<h2 id="useLayoutEffect-和-useEffect区别">useLayoutEffect 和 useEffect区别</h2>
+<p>react的一次更新分为2个阶段：</p>
+<ul>
+<li>render阶段： 构建一个fiber树，也就是workInProgress树；构建过程中，从root开始深度优先遍历再回溯到root
+<ul>
+<li>beginWorker ：组件状态的计算，diff，render函数</li>
+<li>completeWorker：收集effect依赖链表，收集被跳过的update对象</li>
+</ul>
+</li>
+<li>commit阶段 ： 异步执行useEffect，同步执行useLayoutEffect。<br>
+<strong>useEffect要在页面渲染完之后才执行，不会堵塞页面，后者则是在dom更新完成，还没有开始渲染前执行。</strong><br>
+整体流程上都是先在render阶段，生成effect，并将它们拼接成链表，存到fiber.updateQueue上，最终带到commit阶段被处理。他们彼此的区别只是最终的执行时机不同，一个异步一个同步，这使得useEffect不会阻塞渲染，而useLayoutEffect会阻塞渲染。</li>
+</ul>
+<h2 id="useRef-和-useState区别">useRef 和 useState区别</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center">useRef</th>
+<th style="text-align:center">useState</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">use</td>
+<td style="text-align:center">用于对dom的引用，保存值，不会被重新渲染</td>
+<td style="text-align:center">保存和更新组件的状态，值会被重新渲染</td>
+</tr>
+<tr>
+<td style="text-align:center">更新</td>
+<td style="text-align:center">同步更新</td>
+<td style="text-align:center">异步更新</td>
+</tr>
+<tr>
+<td style="text-align:center">返回</td>
+<td style="text-align:center">一个全局可以访问和修改的ref对象</td>
+<td style="text-align:center">当前状态和一个状态更新函数</td>
+</tr>
+</tbody>
+</table>
+<h3 id="useRef">useRef</h3>
+<ol>
+<li>在整个生命周期中保持不变</li>
+<li>更改ref.current 不会引起组件的渲染， 不会触发re-render</li>
+<li>useref 只在组件更新的时候渲染一次</li>
+<li>usestate更新，可以被useeffect监听到， useref不可以</li>
+<li>useref更新的是副作用</li>
+</ol>
+<p>参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/sinat_28071063/article/details/129302701">useRef的值可以被useEffect监听吗</a></p>
+<h3 id="ref-callback"><a target="_blank" rel="noopener" href="https://juejin.cn/post/7187429820928622629">ref callback</a></h3>
+<p>ref 可以接受一个ref对象，也可以接受一个callback函数</p>
+<blockquote>
+<p>这个callback函数只有一个 dom元素 创建dom元素 立即执行，销毁也会执行一次 传参dom为null<br>
+仅在挂载和卸载时调用<br>
+可能引起一些不必要的调用，可以用useCallback包装</p>
+</blockquote>
+<p>用途场景：</p>
+<ul>
+<li>操作 DOM，比如在组件挂载的时候滚动或聚焦</li>
+<li>在 React 获取 DOM 属性，比如宽度或滚动位置</li>
+<li>在 React 控制的 DOM 元素上使用 Portal</li>
+<li>将 DOM 元素提供给多个消费者</li>
+</ul>
+<h2 id="react-hook-的一些闭包问题-和陷阱">react hook 的一些闭包问题 和陷阱</h2>
+<p><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903982037467143">https://juejin.cn/post/6844903982037467143</a><br>
+<a target="_blank" rel="noopener" href="https://juejin.cn/post/6844904193044512782">https://juejin.cn/post/6844904193044512782</a></p>
+<h2 id="父组件和子组件的useEffect哪个先更新">父组件和子组件的useEffect哪个先更新</h2>
+<p>dom render 和 主线程 先执行<br>
+useEffect 在之后执行<br>
+<strong>dom render</strong> 永远在useEffect之前执行</p>
+<ul>
+<li>父子组件 ：
+<ul>
+<li>dom render 和 主线程： 父 -&gt; 子</li>
+<li>useEffect 在之后执行 ： 子 -&gt; 父</li>
+</ul>
+</li>
+<li>兄弟组件：
+<ul>
+<li>按前后顺序，递归</li>
+<li>如果组件含有子组件，则先执行完子组件 ，在走兄弟<br>
+<a target="_blank" rel="noopener" href="https://juejin.cn/post/7169526604199100447">react中函数组件 - 父子组件的执行顺序</a></li>
+</ul>
+</li>
+</ul>
+<ol>
+<li>渲染顺序：React 的渲染过程是从父组件开始的，这是因为父组件通常包含子组件的引用。因此，父组件需要首先渲染以确定子组件应该如何渲染。</li>
+<li>副作用和生命周期方法的执行：在所有组件都渲染完成后，React 会开始执行副作用和生命周期方法。这个过程是从最底层的子组件开始的，然后逐级向上。这样做的原因是，子组件通常是父组件逻辑的一部分，父组件的副作用可能依赖于子组件的状态或 DOM 元素。</li>
+</ol>
+<blockquote>
+<p>父子组件的return（destroy）事件呢<br>
+<a target="_blank" rel="noopener" href="https://codesandbox.io/s/uselayouteffect-zhixingshunxu-h5gg2?file=/src/App.js">demo</a></p>
+</blockquote>
+<ol>
+<li>在删除dom时，从父-&gt;子 删除  destroy</li>
+<li>在更新dom时，或者更新和删除都有时， 子-&gt;父 destroy<br>
+<strong>无论什么情况</strong>都是先执行所有的destroy 在执行create方法</li>
+</ol>
+<h2 id="useEffect-return的意义">useEffect return的意义</h2>
+<p>每次重新渲染，都会让原组件（包括子组件）销毁，在重新诞生。</p>
+<ul>
+<li>首次渲染，不会执行return</li>
+<li>再次渲染，会先执行return ，在执行外面的</li>
+<li>return的回调，可以用来清除一些定时器</li>
+</ul>
+<h2 id="react类组件的生命周期-现在有哪些">react类组件的生命周期 现在有哪些</h2>
+<p>前文提到的引入了fiber+优先级制度，导致原先一些生命周期会混乱</p>
+<ul>
+<li>componentWillMounte/Update/RecieveProps 在16,17被取消</li>
+<li>引入getDerivedStateFromProps(nextProps, nextState) 替代了上三者，render前调用，挂载更新后也会调用，<strong>如果state的值在任何时候都依赖于props时才使用此方法</strong>。
+<ul>
+<li>让组件在props更新后更新state；</li>
+<li>返回一个对象，为null不更新。</li>
+</ul>
+</li>
+<li>shouldComponentUpdate： 如果返回false，则不执行componentDidUpdate，也不会执行render；返回值默认是true。</li>
+<li>render</li>
+<li>getSnapshotBeforeUpdate在render之后，componentDidUpdate之前，</li>
+<li>componentDidUpdate<br>
+更新阶段的生命周期：</li>
+</ul>
+<blockquote>
+<p>static getDerivedStateFromProps()<br>
+shouldComponentUpdate()<br>
+render()<br>
+getSnapshotBeforeUpdate()<br>
+componentDidUpdate()</p>
+</blockquote>
+<h2 id="React的错误边界">React的错误边界</h2>
+<p>过去，组件内的代码异常会导致整个react内部状态破坏，一个组件在渲染期间发生错误，会卸载整个组件。因此引入了错误边界。</p>
+<blockquote>
+<p>只能在类组件中使用，不能在hook中使用。因为需要用this.setState的回调传递callback，useState无法传入回调。<br>
+以下四种场景无法捕获错误边界</p>
+<blockquote>
+<ul>
+<li>事件处理函数，需要用原生的trycatch</li>
+<li>setTimeout等异步代码</li>
+<li>服务端渲染</li>
+<li>他自己本身的错误</li>
+</ul>
+</blockquote>
+</blockquote>
+<div class="note note-primary">
+            <p>错误边界是一种组件， 他可以记录下渲染的错误，然后展示降级的ui。</p>
+          </div>
+<p>实现错误边界的方法 依据两个生命周期</p>
+<div class="note note-primary">
+            <p><strong>getDerivedStateFromError</strong>和<strong>componentDidCatch</strong></p>
+          </div>
+<ul>
+<li>getDerivedStateFromError: 静态方法，给个机会去渲染降级ui</li>
+<li>componetDidCatch： 组件实例方法，当错误发生后，记录错误<br>
+当一个类组件定义了以上二者其一的时候，就会被定性为错误边界。<br>
+<strong>一般来说，会包在最顶层的路由组件</strong>、具体的粒度有自己决定<br>
+需要注意的是，从react16开始，没有被错误边界捕获的错误会导致整个react组件树被卸载。<br>
+因为 有的时候，留下一个错误的ui 比 完全移除他 更糟糕。</li>
+</ul>
+<h4 id="react的fiber-vue为什么不需要fiber">react的fiber vue为什么不需要fiber</h4>
+<p>react的fiber机制：是由于react内状态不可修改，所以需要自顶向下的去渲染树。本身会在内部生成一颗巨大的虚拟dom树，给第二步的diff带来了很大的性能消耗。而js占据主线程，渲染线程就无法工作。所以出现了react的fiber。<br>
+fiber 是一种纤程。他通过requestIdleCallback 去控制组件渲染。<br>
+vue的渲染机制：vue2使用的Object.defineProperty或者vue3中的proxy对数据做一个劫持。vue能准确的知道视图模版中哪一块需要更新。他本身可以实现精准更新，精确到当前组件的最小粒度。一方面：是给每个组件配置了<span class="label label-primary">监听器</span>，管理视图的依赖收集和数据更新。一方面：他的<strong>模版语法，可以实现静态编译</strong>，react的jsx语法是做不到的。这两者对性能也是有消耗的。但是他就不需要fiber去控制组件渲染，让出浏览器线程这类操作了。</p>
+<h2 id="diff算法">diff算法</h2>
+<p>Diff算法通过key和tag来对节点进行取舍，可直接将复杂的比对拦截掉，然后降级成节点的移动和增删这样比较简单的操作。对oldFiber和新的ReactElement节点的比对，将会生成新的fiber节点，同时标记上effectTag，这些fiber会被连到workInProgress树中，作为新的WIP节点。树的结构因此被一点点地确定，而新的workInProgress节点也基本定型。这意味着，在diff过后，workInProgress节点的beginWork节点就完成了。接下来会进入completeWork阶段</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>react 常见问题</div>
+      <div>https://everyapple.github.io/2023/11/02/react-常见问题/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>dwood</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年11月2日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/11/02/react-%E5%92%8Cvue%E7%9A%84%E5%8C%BA%E5%88%AB/" title="react和vue的区别">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">react和vue的区别</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/11/02/hooks-%E9%93%BE%E8%A1%A8/" title="hooks 链表">
+                        <span class="hidden-mobile">hooks 链表</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
