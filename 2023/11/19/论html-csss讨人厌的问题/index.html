@@ -26,7 +26,7 @@
 <meta property="og:image" content="https://picx.zhimg.com/80/v2-d567cb08f77f85f8b462ea610bdb6d8b_1440w.webp?source=2c26e567">
 <meta property="og:image" content="https://s2.loli.net/2023/11/21/V7qLBCRt1fgxM8c.png">
 <meta property="article:published_time" content="2023-11-19T18:56:54.000Z">
-<meta property="article:modified_time" content="2025-08-18T13:01:55.620Z">
+<meta property="article:modified_time" content="2025-08-18T14:45:14.866Z">
 <meta property="article:author" content="dwood">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://picx.zhimg.com/80/v2-d567cb08f77f85f8b462ea610bdb6d8b_1440w.webp?source=2c26e567">
@@ -311,7 +311,7 @@ cssom的生成时机不会影响dom的改变（js文件因为可能会对dom进�
 因此也就是说 <strong>css加载不会阻塞dom的解析，但是会阻塞dom的渲染，也会阻塞后面js的执行</strong><br>
 存在特例，<head>尾部的 CSS 会阻塞位于其后紧跟的 DOM 的解析<br>
 这种情况被称为 FOUC(Flash of Unstyled Content), 样式闪烁, 因为 First Plain 机制的存在, 会将已经解析的 DOM 和 CSSOM 结合生成渲染树并进行部分渲染, 当该 CSS 加载完成后, 才会继续解析 DOM, 而且之前已经渲染的内容将会根据解析完成的 CSS 进行重绘.<br>
-在 Firefox, Chrome, Edge 中，如果 <link rel="stylesheet" href="xxx"> 后面跟着  “<script>”, 则 CSS 加载完成后, 才能触发 DOMContentLoaded<br>
+在 Firefox, Chrome, Edge 中，如果 <link rel="stylesheet" href="xxx"> 后面跟着  “script”, 则 CSS 加载完成后, 才能触发 DOMContentLoaded<br>
 对于 JS ，在交互上，想要正确的操作 DOM，将 JS 放在 HTML 尾部，当解析到 JS 时，虽然没有触发 DOMCOntentLoaded，但是已经可以正确操作 DOM，减少加载时间，将 JS 异步化，对于外部 JS，采用添加 defer 属性或者 async 引入<br>
 而 CSS 在头部不会阻塞 DOM 的解析，但是跟在其后的 JS 在 CSS 加载的这段时间是不能够被执行的, 即使 JS 下载完成时间比 CSS 要快, 优先加载 CSS 避免 FOUC 的出现</p>
 <h4 id="生成render树">生成render树</h4>
